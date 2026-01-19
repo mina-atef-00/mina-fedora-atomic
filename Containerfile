@@ -2,39 +2,46 @@
 FROM scratch AS ctx
 COPY build_files /
 
+# NVIDIA Open Akmods Layer
+# This image contains the nvidia-open drivers and addons
+FROM ghcr.io/ublue-os/akmods-nvidia-open:latest AS akmods-nvidia
+
+# Common Akmods Layer
+# This image contains v4l2loopback and other common kmods
+FROM ghcr.io/ublue-os/akmods:latest AS akmods-common
+
 # Base Image
-FROM ghcr.io/ublue-os/bazzite:stable
+FROM ghcr.io/ublue-os/base-main:latest
 
-## Other possible base images include:
-# FROM ghcr.io/ublue-os/bazzite:latest
-# FROM ghcr.io/ublue-os/bluefin-nvidia:stable
-# 
-# ... and so on, here are more base images
-# Universal Blue Images: https://github.com/orgs/ublue-os/packages
-# Fedora base image: quay.io/fedora/fedora-bootc:41
-# CentOS base images: quay.io/centos-bootc/centos-bootc:stream10
-
-### [IM]MUTABLE /opt
-## Some bootable images, like Fedora, have /opt symlinked to /var/opt, in order to
-## make it mutable/writable for users. However, some packages write files to this directory,
-## thus its contents might be wiped out when bootc deploys an image, making it troublesome for
-## some packages. Eg, google-chrome, docker-desktop.
-##
-## Uncomment the following line if one desires to make /opt immutable and be able to be used
-## by the package manager.
-
-# RUN rm /opt && mkdir /opt
+ARG HOST_PROFILE=lnvo
+ARG IMAGE_NAME="${IMAGE_NAME:-mina-fedora-atomic-${HOST_PROFILE}}"
+ARG IMAGE_VENDOR="${IMAGE_VENDOR:-mina}"
 
 ### MODIFICATIONS
-## make modifications desired in your image and install packages by modifying the build.sh script
-## the following RUN directive does all the things required to run "build.sh" as recommended.
+## Modifications are done in build scripts
+## We use bind mounts to provide akmods to the build scripts
 
+# 1. Run Common Build
+# We bind mount the common akmods to /tmp/rpms/akmods-common so build_common.sh can find them
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=bind,from=akmods-common,source=/rpms,target=/tmp/rpms/akmods-common \
     --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
-    /ctx/build.sh
-    
+    /ctx/build_files/build_common.sh
+
+# 2. Run Host-Specific Build
+# We bind mount both akmods (just in case) or specific ones. 
+# build_desktop.sh needs akmods-nvidia.
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=bind,from=akmods-nvidia,source=/rpms,target=/tmp/rpms/akmods-nvidia \
+    --mount=type=bind,from=akmods-common,source=/rpms,target=/tmp/rpms/akmods-common \
+    --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=tmpfs,dst=/tmp \
+    if [ "$HOST_PROFILE" = "asus" ]; then /ctx/build_files/build_desktop.sh; fi && \
+    if [ "$HOST_PROFILE" = "lnvo" ]; then /ctx/build_files/build_laptop.sh; fi
+
 ### LINTING
 ## Verify final image and contents are correct.
 RUN bootc container lint
