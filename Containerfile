@@ -4,11 +4,11 @@ COPY build_files /
 
 # NVIDIA Open Akmods Layer
 # This image contains the nvidia-open drivers and addons
-FROM ghcr.io/ublue-os/akmods-nvidia-open:latest AS akmods-nvidia
+FROM ghcr.io/ublue-os/akmods-nvidia-open:main-43 AS akmods-nvidia
 
 # Common Akmods Layer
 # This image contains v4l2loopback and other common kmods
-FROM ghcr.io/ublue-os/akmods:latest AS akmods-common
+FROM ghcr.io/ublue-os/akmods:main-43 AS akmods-common
 
 # Base Image
 FROM ghcr.io/ublue-os/base-main:latest
