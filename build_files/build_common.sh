@@ -8,7 +8,7 @@ set -ouex pipefail
 echo "Installing Common Akmods..."
 if [ -d "/tmp/rpms/akmods-common" ]; then
 	dnf5 install -y /tmp/rpms/akmods-common/ublue-os/ublue-os-akmods*.rpm
-	dnf5 install -y /tmp/rpms/akmods-common/kmods/kmod-v4l2loopback*.rpm
+	dnf5 install -y /tmp/rpms/akmods-common/kmods/*v4l2loopback*.rpm
 fi
 ### Install System Packages
 # Core utilities and tools
