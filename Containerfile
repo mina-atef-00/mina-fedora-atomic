@@ -3,11 +3,9 @@ FROM scratch AS ctx
 COPY build_files /build_files
 
 # NVIDIA Open Akmods Layer
-# This image contains the nvidia-open drivers and addons
 FROM ghcr.io/ublue-os/akmods-nvidia-open:main-43 AS akmods-nvidia
 
 # Common Akmods Layer
-# This image contains v4l2loopback and other common kmods
 FROM ghcr.io/ublue-os/akmods:main-43 AS akmods-common
 
 # Base Image
@@ -18,11 +16,9 @@ ARG IMAGE_NAME="${IMAGE_NAME:-mina-fedora-atomic-${HOST_PROFILE}}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR:-mina}"
 
 ### MODIFICATIONS
-## Modifications are done in build scripts
-## We use bind mounts to provide akmods to the build scripts
 
 # 1. Run Common Build
-# We bind mount the common akmods to /tmp/rpms/akmods-common so build_common.sh can find them
+# We bind mount the rpms directory from the akmods image
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=bind,from=akmods-common,source=/rpms,target=/tmp/rpms/akmods-common \
     --mount=type=cache,dst=/var/cache \
@@ -31,8 +27,6 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build_files/build_common.sh
 
 # 2. Run Host-Specific Build
-# We bind mount both akmods (just in case) or specific ones. 
-# build_desktop.sh needs akmods-nvidia.
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=bind,from=akmods-nvidia,source=/rpms,target=/tmp/rpms/akmods-nvidia \
     --mount=type=bind,from=akmods-common,source=/rpms,target=/tmp/rpms/akmods-common \
@@ -43,5 +37,4 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     if [ "$HOST_PROFILE" = "lnvo" ]; then /ctx/build_files/build_laptop.sh; fi
 
 ### LINTING
-## Verify final image and contents are correct.
 RUN bootc container lint

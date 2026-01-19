@@ -6,10 +6,20 @@ set -ouex pipefail
 # Install Common Akmods (like v4l2loopback) here if shared across all profiles
 # NOTE: NVIDIA akmods are handled in build_desktop.sh
 echo "Installing Common Akmods..."
+
+dnf5 install -y "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
+
 if [ -d "/tmp/rpms/akmods-common" ]; then
+	# 1. Install UBlue Akmod setup keys/repos
 	dnf5 install -y /tmp/rpms/akmods-common/ublue-os/ublue-os-akmods*.rpm
-	dnf5 install -y /tmp/rpms/akmods-common/kmods/*v4l2loopback*.rpm
+
+	# 2. Install the Kernel Modules
+	# dnf will now find 'v4l2loopback-kmod-common' in the enabled RPMFusion repo
+	dnf5 install -y /tmp/rpms/akmods-common/kmods/kmod-v4l2loopback*.rpm
 fi
+
+dnf5 remove -y rpmfusion-free-release
+
 ### Install System Packages
 # Core utilities and tools
 echo "Installing System Packages..."
