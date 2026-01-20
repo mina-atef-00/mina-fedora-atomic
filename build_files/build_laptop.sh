@@ -7,9 +7,7 @@ echo "Running Laptop Specific Build..."
 echo "Installing Laptop Specific Packages..."
 dnf5 install -y \
     brightnessctl \
-    intel-media-driver \
-    libva-intel-driver \
-    upower
+    libva-intel-media-driver
 
 ### Power Management Configuration
 

@@ -19,4 +19,5 @@ fi
 ### Install Desktop Specific Packages
 echo "Installing Desktop Specific Packages..."
 dnf5 install -y \
+	i2c-tools \
 	ddcutil

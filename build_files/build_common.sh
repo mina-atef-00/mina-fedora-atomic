@@ -32,74 +32,35 @@ dnf5 -y copr enable atim/bottom
 dnf5 install -y \
 	git \
 	gh \
-	htop \
 	bat \
 	ripgrep \
 	fd-find \
-	gamemode \
-	jq \
 	inxi \
-	tree \
-	wget2 \
 	syncthing \
-	bootupd \
 	chezmoi \
-	openssh-server \
 	greetd \
 	tuigreet \
-	bluez \
 	bluez-tools \
-	udisks2 \
 	power-profiles-daemon \
-	zram-generator \
-	polkit \
-	ffmpeg \
-	ffmpeg-free \
-	gstreamer1-plugins-good \
-	gstreamer1-plugins-bad-free \
-	gstreamer1-plugins-ugly-free \
-	gstreamer1-libav \
-	pipewire \
-	wireplumber \
-	alsa-utils \
 	bottom \
 	zoxide \
 	tealdeer \
-	lsof \
 	duf \
 	ncdu \
 	p7zip \
 	p7zip-plugins \
 	unrar \
-	unzip \
-	zip \
 	neovim \
 	fastfetch \
-	i2c-tools \
-	usbutils \
-	pciutils \
 	evtest \
 	wev \
-	ImageMagick \
 	age \
 	kitty \
 	fish \
-	curl \
 	du-dust \
-	fzf \
-	psmisc \
-	bzip2 \
-	gzip \
 	nautilus \
-	ntfs-3g \
 	udiskie \
 	file-roller \
-	xz \
-	cmake \
-	gcc \
-	make \
-	meson \
-	ninja-build \
 	nodejs \
 	nodejs-npm \
 	python3.13 \
@@ -122,17 +83,13 @@ dnf5 install -y \
 	sox \
 	loupe \
 	gammastep \
-	wl-clipboard \
 	wlr-randr \
 	adw-gtk3-theme \
 	goverlay \
 	mangohud \
-	sdl2-compat \
 	protontricks \
 	xwayland-satellite \
 	xdg-desktop-portal-gnome \
-	xdg-desktop-portal-gtk \
-	xdg-utils \
 	mpv \
 	android-tools \
 	breeze-cursor-theme \
