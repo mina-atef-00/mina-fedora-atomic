@@ -149,16 +149,11 @@ echo "Installing Fonts..."
 dnf5 install -y \
 	nerd-fonts \
 	fira-code-fonts \
-	mozilla-fira-sans-fonts \
 	google-roboto-slab-fonts \
-	google-noto-emoji-fonts \
-	google-noto-sans-cjk-fonts \
 	google-noto-serif-cjk-fonts \
-	fontawesome-fonts \
 	terminus-fonts \
 	jetbrains-mono-fonts \
-	rsms-inter-fonts \
-	ubuntu-family-fonts
+	rsms-inter-fonts
 
 ### Install Window Manager & Shell (Placeholders)
 # Using COPRs or direct install if available
