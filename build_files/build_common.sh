@@ -61,19 +61,11 @@ dnf5 install -y \
 	nautilus \
 	udiskie \
 	file-roller \
-	nodejs \
-	nodejs-npm \
-	python3.13 \
-	uv \
 	accountsservice \
-	efibootmgr \
 	gnome-disk-utility \
 	gvfs \
-	hwdata \
-	lshw \
 	seatd \
 	v4l-utils \
-	openssl \
 	seahorse \
 	chromium \
 	qalculate-gtk \
@@ -87,7 +79,6 @@ dnf5 install -y \
 	adw-gtk3-theme \
 	goverlay \
 	mangohud \
-	protontricks \
 	xwayland-satellite \
 	xdg-desktop-portal-gnome \
 	mpv \
@@ -117,7 +108,21 @@ dnf5 install -y \
 dnf5 install -y niri
 dnf5 install -y dms
 
+### Remove Unwanted Packages
+dnf5 remove -y \
+	swaylock \
+	alacritty \
+	waybar \
+	fuzzel \
+	danksearch \
+	dgop \
+	nodejs \
+	nodejs-docs \
+	nodejs-npm \
+	nodejs-full-i18n
+
 # Copy Configuration Files
+# NOTE /usr is immutable
 cp -r /ctx/build_files/sysusers.d/* /usr/lib/sysusers.d/
 cp -r /ctx/build_files/udev/rules.d/* /usr/lib/udev/rules.d/
 cp -r /ctx/build_files/polkit-1/rules.d/* /usr/share/polkit-1/rules.d/
@@ -128,7 +133,8 @@ cp -r /ctx/build_files/modprobe.d/* /etc/modprobe.d/
 mkdir -p /usr/lib/bootc/kargs.d
 cp -r /ctx/build_files/bootc/kargs.d/* /usr/lib/bootc/kargs.d/
 
-# SSH Config (Note: /etc is mutable, but we seed it here)
+# SSH Config
+# Note: /etc is mutable, but we seed it here
 mkdir -p /etc/ssh/sshd_config.d
 cp /ctx/build_files/etc/ssh/sshd_config.d/*.conf /etc/ssh/sshd_config.d/
 chmod 600 /etc/ssh/sshd_config.d/*.conf

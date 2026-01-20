@@ -38,3 +38,6 @@ HandleLidSwitch=suspend
 HandleLidSwitchExternalPower=suspend
 HandleLidSwitchDocked=ignore
 EOF
+
+### cleanup
+dnf5 clean all

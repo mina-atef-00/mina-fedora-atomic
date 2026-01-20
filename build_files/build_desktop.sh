@@ -21,3 +21,6 @@ echo "Installing Desktop Specific Packages..."
 dnf5 install -y \
 	i2c-tools \
 	ddcutil
+
+### cleanup
+dnf5 clean all
