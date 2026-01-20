@@ -160,16 +160,6 @@ dnf5 install -y \
 dnf5 install -y niri
 dnf5 install -y dms
 
-# Enable and start systemd service
-echo "Enabling DMS systemd service..."
-systemctl --user enable --now dms
-
-# Bind to niri session (only start under niri)
-echo "Binding DMS to niri session..."
-systemctl --user add-wants niri.service dms
-### System Configuration Migration
-echo "Applying System Configuration..."
-
 # Copy Configuration Files
 cp -r /ctx/build_files/sysusers.d/* /usr/lib/sysusers.d/
 cp -r /ctx/build_files/udev/rules.d/* /usr/lib/udev/rules.d/
