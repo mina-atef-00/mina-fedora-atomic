@@ -152,5 +152,12 @@ ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime
 # We use sed here as it's a simple change to an existing config file provided by bluez
 sed -i 's/#AutoEnable=false/AutoEnable=true/' /etc/bluetooth/main.conf || echo "AutoEnable=true" >>/etc/bluetooth/main.conf
 
+# Enable Services
+systemctl enable greetd.service \
+	sshd.service \
+	power-profiles-daemon.service \
+	bluetooth.service \
+	sshd.service
+
 ### cleanup
 dnf5 clean all

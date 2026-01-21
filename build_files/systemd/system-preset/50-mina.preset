@@ -1,9 +1,0 @@
-enable sshd.service
-enable greetd.service
-enable gamemode.service
-enable syncthing.service
-enable bootupd.socket
-enable udisks2.service
-enable power-profiles-daemon.service
-enable bluetooth.service
-disable display-manager.service
