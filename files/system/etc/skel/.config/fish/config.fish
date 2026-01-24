@@ -1,4 +1,3 @@
-
 set fish_greeting
 
 # Add local bin directories to PATH
@@ -6,6 +5,8 @@ fish_add_path $HOME/.npm-global/bin
 fish_add_path $HOME/.local/bin
 fish_add_path $HOME/.pub-cache/bin
 zoxide init fish | source
+fzf --fish --key-bindings | source
+starship init fish | source
 
 # Basic navigation with eza
 alias ll="eza -l --icons --group-directories-first"
@@ -23,6 +24,9 @@ alias .5="cd ../../../../.."
 # Docker/Podman
 alias d="docker"
 alias p="podman"
+alias docker="podman"
+alias docker-compose="podman-compose"
+alias update="topgrade"
 
 # Common shortcuts
 alias e="exit"

@@ -204,7 +204,7 @@ binds {
     Mod+I { spawn "dms" "ipc" "call" "settings" "toggle"; }
     Mod+Escape { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
     Mod+L { spawn "dms" "ipc" "call" "lock" "lock"; }
-    Print { spawn_sh "dms screenshot --stdout --no-file | satty -f - -o - | dms cl copy -t image/png"; }
+    Print { spawn "bash" "-c" "mkdir -p ~/Pictures/Screenshots && dms screenshot --stdout --no-file --no-clipboard | swappy -f - -o - | tee \"$HOME/Pictures/Screenshots/Screenshot_$(date +'%Y-%m-%d_%H-%M-%S.png')\" | dms cl copy -t image/png"; }
     Mod+Print { spawn "dms" "color" "pick" "-a"; }
 
     // -- Media Keys --
