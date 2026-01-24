@@ -1,0 +1,22 @@
+{
+  "name": "Catppuccin Mocha (Lavender, Darker)",
+  "primary": "#b4befe",
+  "primaryText": "#1e1e2e",
+  "primaryContainer": "#b4befe",
+  "secondary": "#89b4fa",
+  "surface": "#181825",
+  "surfaceText": "#cdd6f4",
+  "surfaceVariant": "#1e1e2e",
+  "surfaceVariantText": "#cdd6f4",
+  "surfaceContainer": "#181825",
+  "surfaceContainerHigh": "#1e1e2e",
+  "surfaceContainerHighest": "#313244",
+  "background": "#11111b",
+  "backgroundText": "#cdd6f4",
+  "surfaceTint": "#b4befe",
+  "outline": "#6c7086",
+  "error": "#f38ba8",
+  "warning": "#f9e2af",
+  "info": "#94e2d5",
+  "matugen_type": "scheme-tonal-spot"
+}

@@ -1,0 +1,241 @@
+spawn-at-startup "bash" "-c" "dbus-update-activation-environment --systemd --all"
+spawn-at-startup "dms" "run" "-d"
+prefer-no-csd
+
+input {
+    focus-follows-mouse max-scroll-amount="5%"
+    keyboard {
+        xkb {
+            layout "us,ara"
+            options "grp:win_space_toggle"
+        }
+        numlock
+    }
+    touchpad {
+        tap
+        natural-scroll
+        scroll-method "two-finger"
+    }
+}
+
+layout {
+    gaps 8
+    background-color "transparent"
+    always-center-single-column
+    center-focused-column "never"
+    preset-column-widths {
+        proportion 0.39
+        proportion 0.5
+        proportion 0.61
+        proportion 0.9
+    }
+    default-column-width { proportion 0.5; }
+    focus-ring {
+        width 2
+        urgent-color "#f38ba8"
+        active-gradient from="#cba6f7" to="#b4befe" angle=45 relative-to="workspace-view"
+        inactive-gradient from="#1e1e2e" to="#45475a" angle=45 relative-to="workspace-view"
+    }
+    shadow {
+        softness 30
+        spread 5
+        offset x=0 y=5
+        color "#0007"
+    }
+}
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+animations {}
+
+layer-rule {
+    match namespace="^quickshell$"
+    place-within-backdrop true
+}
+
+window-rule {
+    geometry-corner-radius 5
+    clip-to-geometry true
+}
+
+window-rule {
+    match is-active=true
+    opacity 0.98
+}
+
+window-rule {
+    match is-active=false
+    opacity 0.97
+}
+
+window-rule {
+  match title="^(Picture-in-Picture|picture-in-Picture|Picture-in-picture|picture-in-picture)$"
+  open-floating true
+}
+
+window-rule {
+    match title="Bitwarden"
+    match app-id="polkit-gnome-authentication-agent-1"
+    block-out-from "screen-capture"
+}
+
+window-rule {
+    match app-id=r#"^org\.gnome\."#
+    draw-border-with-background false
+}
+
+window-rule {
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    match app-id="Alacritty"
+    match app-id="zen"
+    match app-id="com.mitchellh.ghostty"
+    match app-id="kitty"
+    draw-border-with-background false
+}
+
+window-rule {
+    match app-id="Code"
+    match app-id="vscodium"
+    default-column-width { proportion 0.9; }
+}
+
+window-rule {
+    match app-id="zen"
+    match app-id="org.gnome.Nautilus"
+    match app-id="caja"
+    default-column-width { proportion 0.61; }
+}
+
+binds {
+    // -- Core --
+    Mod+Return { spawn "kitty"; }
+    Mod+Shift+F { spawn "zen"; }
+    Mod+W repeat=false { close-window; }
+    Mod+O { toggle-window-floating; }
+    Mod+Tab { toggle-overview; }
+
+    // -- Size & State --
+    Mod+F { fullscreen-window; }
+    Mod+G { maximize-column; }
+
+    // -- Focus Windows (Directional) --
+    Mod+Left  { focus-column-left; }
+    Mod+Down  { focus-window-down; }
+    Mod+Up    { focus-window-up; }
+    Mod+Right { focus-column-right; }
+    Mod+Home { focus-column-first; }
+    Mod+End  { focus-column-last; }
+
+    // -- Move Windows (Directional) --
+    Mod+Shift+Left  { move-column-left; }
+    Mod+Shift+Down { move-window-down; }
+    Mod+Shift+Up    { move-window-up; }
+    Mod+Shift+Right { move-column-right; }
+    Mod+Shift+Home { move-column-to-first; }
+    Mod+Shift+End  { move-column-to-last; }
+
+    // -- Focus Workspaces (Specific) --
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+
+    Mod+Shift+1 { move-column-to-workspace 1; }
+    Mod+Shift+2 { move-column-to-workspace 2; }
+    Mod+Shift+3 { move-column-to-workspace 3; }
+    Mod+Shift+4 { move-column-to-workspace 4; }
+    Mod+Shift+5 { move-column-to-workspace 5; }
+ 
+
+    // -- Focus Workspaces (Up/Down) --
+    Mod+Ctrl+Up   { focus-workspace-up; }
+    Mod+Ctrl+Down { focus-workspace-down; }
+    Mod+Page_Down { focus-workspace-down; }
+    Mod+Page_Up   { focus-workspace-up; }
+
+    // -- Move to Workspaces (Up/Down) --
+    Mod+Ctrl+Shift+Up   { move-column-to-workspace-up; }
+    Mod+Ctrl+Shift+Down { move-column-to-workspace-down; }
+
+    // -- Focus Monitors (Displays) --
+    Mod+Alt+Left  { focus-monitor-left; }
+    Mod+Alt+Right { focus-monitor-right; }
+    Mod+Alt+Up    { focus-monitor-up; }
+    Mod+Alt+Down { focus-monitor-down; }
+
+    // -- Move to Monitors --
+    Mod+Shift+Alt+Left  { move-column-to-monitor-left; }
+    Mod+Shift+Alt+Right { move-column-to-monitor-right; }
+    Mod+Shift+Alt+Up    { move-column-to-monitor-up; }
+    Mod+Shift+Alt+Down  { move-column-to-monitor-down; }
+
+    // -- Resizing --
+    Mod+Equal { switch-preset-column-width; }
+    Mod+Minus { switch-preset-column-width-back; }
+
+    // -- Mouse Click Actions --
+    Mod+MouseMiddle  { maximize-column; }
+
+    // -- Mouse Scroll Actions --
+    Mod+WheelScrollDown { focus-column-right; }
+    Mod+WheelScrollUp { focus-column-left; }
+    Mod+Shift+WheelScrollDown { move-column-right; }
+    Mod+Shift+WheelScrollUp { move-column-left; }
+    Mod+Ctrl+WheelScrollDown { focus-workspace-down; }
+    Mod+Ctrl+WheelScrollUp { focus-workspace-up; }
+    Mod+Ctrl+Shift+WheelScrollDown { move-column-to-workspace-down; }
+    Mod+Ctrl+Shift+WheelScrollUp   { move-column-to-workspace-up; }
+
+    // -- Apps & Scripts --
+    Mod+Shift+E { spawn "nautilus"; }
+    Mod+Shift+S { spawn "steam"; }
+    Mod+Shift+T { spawn "kitty" "-e" "btm"; }
+    Mod+Shift+Q { spawn "kitty" "-e" "qwen"; }
+    Mod+Shift+D { spawn "vesktop"; }
+    Mod+Shift+N { spawn "zed"; }
+
+    // -- DMS Integration --
+    Mod+Ctrl+V { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
+    Mod+A { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
+    Mod+S { spawn "dms" "ipc" "call" "notifications" "toggle"; }
+    Mod+I { spawn "dms" "ipc" "call" "settings" "toggle"; }
+    Mod+Escape { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
+    Mod+L { spawn "dms" "ipc" "call" "lock" "lock"; }
+    Print { spawn_sh "dms screenshot --stdout --no-file | satty -f - -o - | dms cl copy -t image/png"; }
+    Mod+Print { spawn "dms" "color" "pick" "-a"; }
+
+    // -- Media Keys --
+    XF86AudioRaiseVolume { spawn "dms" "ipc" "call" "audio" "increment" "5"; }
+    XF86AudioLowerVolume { spawn "dms" "ipc" "call" "audio" "decrement" "5"; }
+    XF86AudioMute        { spawn "dms" "ipc" "call" "audio" "mute"; }
+    XF86AudioMicMute     { spawn "dms" "ipc" "call" "audio" "micmute"; }
+    XF86AudioPlay        { spawn "dms" "ipc" "call" "mpris" "playPause"; }
+    XF86AudioPause       { spawn "dms" "ipc" "call" "mpris" "playPause"; }
+    XF86AudioPrev        { spawn "dms" "ipc" "call" "mpris" "previous"; }
+    XF86AudioNext        { spawn "dms" "ipc" "call" "mpris" "next"; }
+    XF86MonBrightnessUp  { spawn "dms" "ipc" "call" "brightness" "increment" "5"; }
+    XF86MonBrightnessDown { spawn "dms" "ipc" "call" "brightness" "decrement" "5"; }
+
+    Mod+F1 { spawn "dms" "ipc" "call" "audio" "increment" "5"; }
+    Mod+F2 { spawn "dms" "ipc" "call" "audio" "decrement" "5"; }
+    Mod+F3 { spawn "dms" "ipc" "call" "audio" "mute"; }
+    Mod+F4 { spawn "dms" "ipc" "call" "audio" "micmute"; }
+    Mod+F5 { spawn "dms" "ipc" "call" "mpris" "play"; }
+    Mod+F6 { spawn "dms" "ipc" "call" "mpris" "pause"; }
+    Mod+F7 { spawn "dms" "ipc" "call" "mpris" "previous"; }
+    Mod+F8 { spawn "dms" "ipc" "call" "mpris" "next"; }
+    Mod+F11 { spawn "dms" "ipc" "call" "brightness" "increment" "5"; }
+    Mod+F12 { spawn "dms" "ipc" "call" "brightness" "decrement" "5"; }
+
+    Mod+Shift+Slash { show-hotkey-overlay; }
+}
+
+include "dms/colors.kdl"
+include "dms/layout.kdl"
+include "dms/alttab.kdl"
+include "dms/binds.kdl"
+
+

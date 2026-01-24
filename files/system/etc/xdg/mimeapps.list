@@ -1,0 +1,46 @@
+[Default Applications]
+# Browser
+x-scheme-handler/http=app.zen_browser.Zen.desktop
+x-scheme-handler/https=app.zen_browser.Zen.desktop
+text/html=app.zen_browser.Zen.desktop
+application/xhtml+xml=app.zen_browser.Zen.desktop
+
+# Terminal
+x-scheme-handler/terminal=kitty.desktop
+
+# Text Editor
+text/plain=app.zed.Zed.desktop
+text/markdown=app.zed.Zed.desktop
+application/json=app.zed.Zed.desktop
+text/x-python=app.zed.Zed.desktop
+text/x-c=app.zed.Zed.desktop
+text/x-c++=app.zed.Zed.desktop
+application/x-shellscript=app.zed.Zed.desktop
+
+# Image Viewer
+image/png=org.gnome.Loupe.desktop
+image/jpeg=org.gnome.Loupe.desktop
+image/gif=org.gnome.Loupe.desktop
+image/webp=org.gnome.Loupe.desktop
+
+# Video/Audio Player
+video/mp4=mpv.desktop
+video/x-matroska=mpv.desktop
+audio/mpeg=mpv.desktop
+audio/x-m4a=mpv.desktop
+
+# Office
+application/pdf=org.libreoffice.LibreOffice.desktop
+application/vnd.oasis.opendocument.text=org.libreoffice.LibreOffice.desktop
+application/msword=org.libreoffice.LibreOffice.desktop
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=org.libreoffice.LibreOffice.desktop
+
+# Archive Manager
+application/x-7z-compressed=org.gnome.FileRoller.desktop
+application/x-tar=org.gnome.FileRoller.desktop
+application/zip=org.gnome.FileRoller.desktop
+
+# File Manager
+inode/directory=org.gnome.Nautilus.desktop
+
+[Added Associations]

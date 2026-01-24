@@ -1,0 +1,95 @@
+# === Appearance & Fonts ===
+font-family = "FiraCode Nerd Font Mono"
+font-size = 13
+# Ghostty synthesizes bold/italic natively using stroke thickening and slanting
+# unless stylistic variants are found in the font-family.
+
+# === Window Layout ===
+window-padding-x = 4
+window-padding-y = 4
+# Matches 'placement_strategy center' by balancing extra cell pixels
+window-padding-balance = true 
+confirm-close-surface = false
+
+# === Scrolling & Mouse ===
+# NOTE: Ghostty measures scrollback in BYTES, not lines. 
+# 10,000 lines at ~100 bytes/line is roughly 1MB.
+# We set 100MB here to ensure a massive buffer.
+scrollback-limit = 104857600
+mouse-scroll-multiplier = 1
+mouse-hide-while-typing = true
+# Disables the audio bell (Bell features are GTK-specific on Linux)
+bell-features = no-audio,attention,title
+
+# === Tabs ===
+# Ghostty integrates tabs into the titlebar (GTK/Native)
+gtk-tabs-location = top
+gtk-titlebar-style = tabs
+gtk-wide-tabs = true
+
+# === Catppuccin Mocha Theme ===
+foreground = #cdd6f4
+background = #1e1e2e
+selection-foreground = #1e1e2e
+selection-background = #f5e0dc
+
+# Cursor
+cursor-color = #f5e0dc
+cursor-text = #1e1e2e
+# Note: 'cursor_trail' is currently a performance-heavy shader feature.
+# Ghostty handles this via 'custom-shader' if needed, but it is not a base config.
+cursor-style = block
+cursor-style-blink = false
+
+# Palette (Indices 0-15)
+palette = 0=#45475a
+palette = 8=#585b70
+palette = 1=#f38ba8
+palette = 9=#f38ba8
+palette = 2=#a6e3a1
+palette = 10=#a6e3a1
+palette = 3=#f9e2af
+palette = 11=#f9e2af
+palette = 4=#89b4fa
+palette = 12=#89b4fa
+palette = 5=#f5c2e7
+palette = 13=#f5c2e7
+palette = 6=#94e2d5
+palette = 14=#94e2d5
+palette = 7=#bac2de
+palette = 15=#a6adc8
+
+# === Keybindings ===
+# Syntax: keybind = trigger=action
+
+# Clipboard
+keybind = ctrl+shift+v=paste_from_clipboard
+keybind = shift+insert=paste_from_clipboard
+
+# Scrolling
+keybind = ctrl+shift+k=scroll_page_up
+keybind = ctrl+shift+j=scroll_page_down
+keybind = ctrl+shift+page_up=scroll_page_up
+keybind = ctrl+shift+page_down=scroll_page_down
+keybind = ctrl+shift+home=scroll_to_top
+keybind = ctrl+shift+end=scroll_to_bottom
+
+# Window Management (Splits & Tabs)
+keybind = alt+n=new_window
+keybind = alt+w=close_surface
+keybind = ctrl+shift+enter=new_split:down
+keybind = ctrl+shift+s=new_split:right
+keybind = ctrl+shift+]=goto_split:next
+keybind = ctrl+shift+[=goto_split:previous
+
+# Tab Management
+keybind = ctrl+shift+right=next_tab
+keybind = ctrl+shift+left=previous_tab
+keybind = ctrl+shift+t=new_tab
+keybind = ctrl+shift+q=close_tab
+
+# Font Size
+keybind = ctrl+shift+up=increase_font_size
+keybind = ctrl+shift+down=decrease_font_size
+keybind = ctrl+shift+backspace=reset_font_size
+
