@@ -45,10 +45,8 @@ COPR_LIST=(
   "dejan/rpms"
   "lilay/topgrade"
   "dejan/lazygit"
-  "che/nerd-fonts"
   "avengemedia/dms"
   "atim/bottom"
-  "scottames/ghostty"
 )
 
 for copr in "${COPR_LIST[@]}"; do
@@ -108,7 +106,7 @@ PKGS=(
   "lazygit"
 
   # GUI Utilities
-  "ghostty"
+  "kitty"
   "nautilus"
   "nautilus-python"
   "file-roller"
@@ -142,15 +140,6 @@ PKGS=(
   "bluez-tools"
   "power-profiles-daemon"
   "android-tools"
-
-  # Fonts
-  "nerd-fonts"
-  "jetbrains-mono-fonts"
-  "rsms-inter-fonts"
-  "fira-code-fonts"
-  "google-noto-serif-cjk-fonts"
-  "google-roboto-slab-fonts"
-  "terminus-fonts"
 )
 
 log "INFO" "Installing Main Packages..."
@@ -175,7 +164,7 @@ REMOVE_PKGS=(
 log "INFO" "Removing Unwanted Packages..."
 dnf5 remove -y "${REMOVE_PKGS[@]}"
 
-# --- 5. CLEANUP REPOS (NEW) ---
+# --- 5. CLEANUP REPOS ---
 log "INFO" "Disabling COPRs to keep runtime clean..."
 for copr in "${COPR_LIST[@]}"; do
   dnf5 -y copr disable "$copr"

@@ -7,7 +7,6 @@ source "${SCRIPTS_DIR}/lib.sh"
 # Services to be explicitly enabled
 ENABLED_SERVICES=(
   "greetd.service"
-  "sshd.service"
   "bluetooth.service"
   "power-profiles-daemon.service"
   "systemd-timesyncd.service"

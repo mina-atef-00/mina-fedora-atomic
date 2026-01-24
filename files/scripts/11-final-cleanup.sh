@@ -24,12 +24,28 @@ rm -rf /usr/share/doc
 rm -rf /usr/bin/chsh
 rm -rf /usr/share/doc/just
 
-# 4. Remove desktopfiles
-rm -vf /usr/share/applications/byobu.desktop
-rm -vf /usr/share/applications/nvim.desktop
-rm -vf /usr/share/applications/btop.desktop
+# List of .desktop files to remove (relative to /usr/share/applications)
+REMOVE_DESKTOP_FILES=(
+  "byobu"
+  "nvim"
+  "btop"
+  "echomixer"
+  "envy24control"
+  "hdajackretask"
+  "hdspmixer"
+  "hdspconf"
+  "htop"
+  "hwmixvolume"
+  "nvtop"
+)
 
-# 5. Remove more stuffs in skel
+log "INFO" "Removing clutter from Application Menu..."
+
+for file in "${REMOVE_DESKTOP_FILES[@]}"; do
+  rm -vf "/usr/share/applications/${file}.desktop"
+done
+
+# 5. Remove more fluff in skel
 rm -rvf /etc/skel/.mozilla
 rm -rvf /etc/skel/.config/user-tmpfiles.d# 5. Remove /boot artifacts
 

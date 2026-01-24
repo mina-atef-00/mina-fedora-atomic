@@ -12,12 +12,15 @@ chmod 700 /var/roothome
 mkdir -vp /var/lib/alternatives
 mkdir -vp /etc/environment.d
 
+# To make /opt immutable, needed for some rpm? packages (browsers, docker-desktop)
+rm -v /opt && mkdir -vp /opt
+
 # --- CONFIG: HOSTNAME ---
 log "INFO" "Setting Hostname..."
 if [[ "$HOST_PROFILE" == "asus" ]]; then
-  echo "mina-asus" >/etc/hostname
+  echo "asus" >/etc/hostname
 elif [[ "$HOST_PROFILE" == "lnvo" ]]; then
-  echo "mina-lnvo" >/etc/hostname
+  echo "lnvo" >/etc/hostname
 else
   echo "mina-atomic" >/etc/hostname
 fi

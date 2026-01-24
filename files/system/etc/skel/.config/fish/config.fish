@@ -5,7 +5,7 @@ fish_add_path $HOME/.npm-global/bin
 fish_add_path $HOME/.local/bin
 fish_add_path $HOME/.pub-cache/bin
 zoxide init fish | source
-fzf --fish --key-bindings | source
+fzf --fish | source
 starship init fish | source
 
 # Basic navigation with eza

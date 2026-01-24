@@ -6,7 +6,7 @@ text/html=app.zen_browser.Zen.desktop
 application/xhtml+xml=app.zen_browser.Zen.desktop
 
 # Terminal
-x-scheme-handler/terminal=ghostty.desktop
+x-scheme-handler/terminal=kitty.desktop
 
 # Text Editor
 text/plain=app.zed.Zed.desktop
