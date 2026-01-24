@@ -18,7 +18,6 @@ rm -rf /var/log/*
 mkdir -p /var/log/journal
 
 # 3. Remove /tmp artifacts
-rm -rf /tmp/*
 rm -rf /var/tmp/*
 
 rm -rf /usr/share/doc
