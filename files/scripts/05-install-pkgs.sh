@@ -29,7 +29,7 @@ if [[ "$HOST_PROFILE" == "asus" ]]; then
 
 elif [[ "$HOST_PROFILE" == "lnvo" ]]; then
   log "INFO" ">> Profile LNVO: Installing Intel/Laptop Drivers..."
-  dnf5 install -y brightnessctl libva-intel-media-driver intel-media-driver
+  dnf5 install -y brightnessctl libva-intel-media-driver
 fi
 
 # Cleanup RPM Fusion Repo
