@@ -18,12 +18,8 @@ ENABLED_SERVICES=(
 
 # Global services to be explicitly enabled
 ENABLED_GLOBAL_SERVICES=(
-  "chezmoi-init.service"
-  "chezmoi-update.timer"
   "gnome-keyring-daemon.service"
   "gnome-keyring-daemon.socket"
-  "udiskie.service"
-
 )
 
 # Presets to be explicitly enabled
