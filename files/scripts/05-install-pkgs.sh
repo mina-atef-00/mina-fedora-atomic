@@ -25,7 +25,7 @@ if [[ "$HOST_PROFILE" == "asus" ]]; then
     dnf5 install -y /tmp/rpms/akmods-nvidia/kmods/kmod-nvidia*.rpm
   fi
   # Desktop hardware tools
-  dnf5 install -y i2c-tools ddcutil nvtop
+  dnf5 install -y i2c-tools ddcutil
 
 elif [[ "$HOST_PROFILE" == "lnvo" ]]; then
   log "INFO" ">> Profile LNVO: Installing Intel/Laptop Drivers..."
@@ -50,8 +50,6 @@ COPR_LIST=(
   "avengemedia/dms"
   "atim/bottom"
   "scottames/ghostty"
-  "jkinred/satty"
-)
 
 for copr in "${COPR_LIST[@]}"; do
   dnf5 -y copr enable "$copr"
@@ -68,18 +66,10 @@ PKGS=(
   "qt6ct"
   "xwayland-satellite"
   "xdg-desktop-portal-gnome"
-  "xdg-desktop-portal-gtk"
   "xdg-terminal-exec"
   "cava"
-  "fwupd"
 
   "zen-browser"
-
-  "NetworkManager"
-  "alsa-firmware"
-  "alsa-sof-firmware"
-  "alsa-tools"
-  "firewalld"
 
   # CLI / Rust Tools
   "eza"
@@ -87,7 +77,6 @@ PKGS=(
   "ripgrep"
   "fd-find"
   "zoxide"
-  "fzf"
   "inxi"
   "bottom"
   "tealdeer"
@@ -98,7 +87,6 @@ PKGS=(
   "fish"
   "topgrade"
   "yazi"
-  "flatpak"
   "chezmoi"
   "steam-devices"
   "udiskie"
@@ -111,21 +99,15 @@ PKGS=(
   "age"
 
   # Multimedia
-  "pipewire"
-  "pipewire-alsa"
-  "pipewire-jack-audio-connection-kit"
-  "pipewire-pulseaudio"
-  "wireplumber"
   "playerctl"
   "webp-pixbuf-loader"
+  "alsa-tools"
 
   # Editors & Git
   "neovim"
-  "wl-clipboard"
   "git"
   "gh"
   "lazygit"
-  "distrobox"
 
   # GUI Utilities
   "ghostty"
@@ -143,7 +125,7 @@ PKGS=(
   "qalculate"
   "picard"
   "syncplay"
-  "satty"
+  "swappy"
   "gnome-disk-utility"
   "gnome-keyring"
   "gnome-keyring-pam"
