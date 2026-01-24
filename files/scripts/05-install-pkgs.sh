@@ -48,7 +48,6 @@ COPR_LIST=(
   "dejan/lazygit"
   "che/nerd-fonts"
   "avengemedia/dms"
-  "yuran/niri"
   "atim/bottom"
   "scottames/ghostty"
   "jkinred/satty"
