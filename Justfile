@@ -207,7 +207,55 @@ build-raw $target_image=("localhost/" + image_name) $tag=default_tag: && (_build
 
 # Build an ISO virtual machine image
 [group('Build Virtal Machine Image')]
-build-iso $target_image=("localhost/" + image_name) $tag=default_tag: && (_build-bib target_image tag "iso" "disk_config/iso.toml")
+# Master ISO command
+# Usage: just iso <profile> <source>
+# Example: just iso asus ghcr   (Builds Desktop, installs pointing to GitHub)
+# Example: just iso lnvo local  (Builds Laptop, installs pointing to nothing/local)
+iso profile source="ghcr":
+    #!/usr/bin/env bash
+    set -eou pipefail
+
+    # 1. Determine Image Name based on Profile
+    if [[ "{{profile}}" == "asus" ]]; then
+        IMAGE_NAME="mina-fedora-atomic-desktop"
+    elif [[ "{{profile}}" == "lnvo" ]]; then
+        IMAGE_NAME="mina-fedora-atomic-laptop"
+    else
+        echo "❌ Error: Unknown profile '{{profile}}'. Use 'asus' or 'lnvo'."
+        exit 1
+    fi
+
+    echo "🏗️  Phase 1: Building Container ($IMAGE_NAME)..."
+    just build "$IMAGE_NAME" "{{profile}}" "latest"
+
+    # 2. Configure the Switch Command based on Source
+    SWITCH_CMD=""
+    if [[ "{{source}}" == "ghcr" ]]; then
+        REGISTRY="ghcr.io/mina-atef-00"
+        echo "🔗 Phase 2: Configuring Installer to pull from $REGISTRY"
+        SWITCH_CMD="bootc switch --mutate-in-place --transport registry ${REGISTRY}/${IMAGE_NAME}:latest"
+    else
+        echo "🏠 Phase 2: Local Mode. Installer will NOT switch to remote registry."
+        SWITCH_CMD="# Local build selected. No bootc switch performed."
+    fi
+
+    # 3. Generate Temporary TOML
+    # We read iso-base.toml and replace the placeholder with our command
+    echo "📄 Phase 3: Generating installer config..."
+    sed "s|{{ BOOTC_SWITCH_COMMAND }}|$SWITCH_CMD|g" disk_config/iso-base.toml > disk_config/_generated.toml
+
+    # 4. Run Bootc Image Builder
+    echo "💿 Phase 4: Baking ISO..."
+    just _build-bib "$IMAGE_NAME" "latest" "iso" "disk_config/_generated.toml"
+
+    # 5. Cleanup and Rename
+    rm disk_config/_generated.toml
+    
+    # Rename output to avoid overwriting
+    OUTPUT_NAME="output/install-{{profile}}-{{source}}.iso"
+    mv output/bootiso/install.iso "$OUTPUT_NAME"
+    
+    echo "✅ Success! ISO created at: $OUTPUT_NAME"
 
 # Rebuild a QCOW2 virtual machine image
 [group('Build Virtal Machine Image')]
