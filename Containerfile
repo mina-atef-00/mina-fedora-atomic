@@ -8,7 +8,6 @@ FROM ghcr.io/ublue-os/base-main:latest
 
 ARG HOST_PROFILE
 ARG IMAGE_NAME
-ARG IMAGE_VENDOR
 
 # Env Vars for scripts to read
 ENV HOST_PROFILE="${HOST_PROFILE}"
