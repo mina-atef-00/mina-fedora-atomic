@@ -7,6 +7,9 @@ log "INFO" "Starting Package Management..."
 # --- 1. DRIVER INSTALLATION (UBlue Akmods) ---
 log "INFO" "Checking for Akmods..."
 
+# Enable RPM Fusion Free Repo (NVIDIA dependencies)
+dnf5 install -y "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
+
 # Common Akmods (v4l2loopback, ublue-os-addons)
 if [ -d "/tmp/rpms/akmods-common" ]; then
   log "INFO" "Installing Common Akmods..."
@@ -28,6 +31,9 @@ elif [[ "$HOST_PROFILE" == "lnvo" ]]; then
   log "INFO" ">> Profile LNVO: Installing Intel/Laptop Drivers..."
   dnf5 install -y brightnessctl libva-intel-media-driver intel-media-driver
 fi
+
+# Cleanup RPM Fusion Repo
+dnf5 remove -y rpmfusion-free-release
 
 # --- 2. REPOSITORY SETUP ---
 log "INFO" "Enabling COPR Repositories..."
