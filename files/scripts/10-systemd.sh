@@ -10,7 +10,6 @@ ENABLED_SERVICES=(
   "sshd.service"
   "bluetooth.service"
   "power-profiles-daemon.service"
-  "rechunker-group-fix.service"
   "systemd-timesyncd.service"
   "systemd-resolved.service"
   "firewalld.service"
