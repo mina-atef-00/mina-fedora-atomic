@@ -2,34 +2,82 @@
 set -oue pipefail
 source "${SCRIPTS_DIR}/lib.sh"
 
-log "INFO" "Applying file overlay from ${SYSTEM_DIR}..."
+log "INFO" "Starting Robust System Overlay..."
 
-# Safety Check: Prevent writing to /var or /home in the image
-if [ -d "${SYSTEM_DIR}/var" ] || [ -d "${SYSTEM_DIR}/home" ] || [ -d "${SYSTEM_DIR}/root" ]; then
-  die "Detected /var, /home, or /root in overlay. In Bootc/Atomic, these are state directories and should not be in the container image. Use /usr/share or /etc/skel."
-fi
+# 1. THE SAFETY GATE: Prevent stateful directory pollution
+# We check if the source overlay contains folders that Bootc manages as runtime state.
+FORBIDDEN_PATHS=("var" "home" "root" "run")
+for path in "${FORBIDDEN_PATHS[@]}"; do
+  if [ -d "${SYSTEM_DIR}/${path}" ]; then
+    die "CRITICAL ERROR: Overlay contains '/${path}'. In Bootc images, this directory is for runtime state only and cannot be part of the immutable image. Use /usr/share/factory or /etc/skel instead."
+  fi
+done
 
-# 1. The Brute Force Copy
-# -d: preserve links
-# -r: recursive
-# -f: force overwrite
-cp -drf "${SYSTEM_DIR}/"* /
+# 2. THE ATOMIC COPY
+log "INFO" "Copying files from ${SYSTEM_DIR} to / ..."
+cp -drfp "${SYSTEM_DIR}/"* /
 
-# 2. Fix Permissions (Crucial for SSH and Greetd)
-log "INFO" "Fixing file permissions..."
+# 3. OWNERSHIP ENFORCEMENT
+# We ensure root owns everything in the system paths.
+# We loop through an array to keep the code clean and check existence.
+SYSTEM_PATHS=(
+  "/etc/ssh"
+  "/etc/greetd"
+  "/etc/environment.d"
+  "/usr/lib/bootc"
+  "/usr/lib/sysusers.d"
+  "/usr/lib/udev/rules.d"
+  "/usr/share/polkit-1/rules.d"
+  "/usr/lib/pam.d"
+)
 
-# SSH Configs must be 600
+log "INFO" "Enforcing root ownership on system paths..."
+for path in "${SYSTEM_PATHS[@]}"; do
+  if [ -d "$path" ]; then
+    chown -R root:root "$path"
+    log "DEBUG" "  [OK] Ownership set for $path"
+  fi
+done
+
+# 4. SECURITY PERMISSIONS (Defensive Implementation)
+
+# --- SSH Security ---
 if [ -d "/etc/ssh/sshd_config.d" ]; then
-  chmod 600 /etc/ssh/sshd_config.d/*.conf 2>/dev/null || true
+  log "INFO" "Applying strict SSH permissions..."
+  chmod 700 /etc/ssh/sshd_config.d
+  # Find is safer than wildcards; it won't fail if no files exist
+  find /etc/ssh/sshd_config.d -type f -name "*.conf" -exec chmod 600 {} +
 fi
 
-# Greetd config must be readable
-if [ -f "/etc/greetd/config.toml" ]; then
-  chmod 644 /etc/greetd/config.toml
+# --- Greetd / DMS / PAM ---
+if [ -d "/etc/greetd" ]; then
+  log "INFO" "Securing Greetd configuration..."
+  chmod 755 /etc/greetd
+  [ -f "/etc/greetd/config.toml" ] && chmod 644 /etc/greetd/config.toml
 fi
 
+if [ -f "/usr/lib/pam.d/greetd-spawn" ]; then
+  log "INFO" "Setting PAM greetd-spawn permissions..."
+  chmod 644 /usr/lib/pam.d/greetd-spawn
+fi
+
+# --- Polkit & Udev (Immutable System Rules) ---
+log "INFO" "Setting permissions for system rules..."
+[ -d "/usr/share/polkit-1/rules.d" ] && find /usr/share/polkit-1/rules.d -type f -exec chmod 644 {} +
+[ -d "/usr/lib/udev/rules.d" ] && find /usr/lib/udev/rules.d -type f -exec chmod 644 {} +
+
+# --- Environment ---
+if [ -d "/etc/environment.d" ]; then
+  log "INFO" "Securing environment variables..."
+  find /etc/environment.d -type f -exec chmod 644 {} +
+fi
+
+# 5. FINAL LOGIC CHECK
 if [ -d "/usr/lib/bootc/kargs.d" ]; then
-  log "INFO" "Kernel arguments injected via bootc/kargs.d"
+  log "INFO" "Bootc Kernel Arguments detected and applied via overlay."
 fi
 
-log "INFO" "Overlay applied successfully."
+log "INFO" "Setting system timezone to Africa/Cairo..."
+ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime
+
+log "INFO" "Overlay process completed successfully."
