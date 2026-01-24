@@ -43,7 +43,6 @@ COPR_LIST=(
   "alternateved/eza"
   "atim/starship"
   "dejan/rpms"
-  "sneexy/zen-browser"
   "lilay/topgrade"
   "dejan/lazygit"
   "che/nerd-fonts"
@@ -69,8 +68,6 @@ PKGS=(
   "xdg-desktop-portal-gnome"
   "xdg-terminal-exec"
   "cava"
-
-  "zen-browser"
 
   # CLI / Rust Tools
   "eza"
