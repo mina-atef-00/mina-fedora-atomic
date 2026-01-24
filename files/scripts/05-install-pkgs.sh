@@ -50,6 +50,7 @@ COPR_LIST=(
   "avengemedia/dms"
   "atim/bottom"
   "scottames/ghostty"
+)
 
 for copr in "${COPR_LIST[@]}"; do
   dnf5 -y copr enable "$copr"

@@ -91,7 +91,7 @@ window-rule {
     match app-id="Alacritty"
     match app-id="zen"
     match app-id="com.mitchellh.ghostty"
-    match app-id="kitty"
+    match app-id="ghostty"
     draw-border-with-background false
 }
 
@@ -110,7 +110,7 @@ window-rule {
 
 binds {
     // -- Core --
-    Mod+Return { spawn "kitty"; }
+    Mod+Return { spawn "ghostty"; }
     Mod+Shift+F { spawn "zen"; }
     Mod+W repeat=false { close-window; }
     Mod+O { toggle-window-floating; }
@@ -192,8 +192,8 @@ binds {
     // -- Apps & Scripts --
     Mod+Shift+E { spawn "nautilus"; }
     Mod+Shift+S { spawn "steam"; }
-    Mod+Shift+T { spawn "kitty" "-e" "btm"; }
-    Mod+Shift+Q { spawn "kitty" "-e" "qwen"; }
+    Mod+Shift+T { spawn "ghostty" "-e" "btm"; }
+    Mod+Shift+O { spawn "ghostty" "-e" "opencode"; }
     Mod+Shift+D { spawn "vesktop"; }
     Mod+Shift+N { spawn "zed"; }
 
