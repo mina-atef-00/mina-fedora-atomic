@@ -77,6 +77,20 @@ if [ -d "/usr/lib/bootc/kargs.d" ]; then
   log "INFO" "Bootc Kernel Arguments detected and applied via overlay."
 fi
 
+# --- BLUETOOTH CONFIGURATION ---
+# Force BlueZ to power up the controller on boot.
+# We append this to the end of main.conf to override defaults.
+if [ -f "/etc/bluetooth/main.conf" ]; then
+  log "INFO" "Configuring Bluetooth AutoEnable..."
+  cat <<EOF >>/etc/bluetooth/main.conf
+
+[Policy]
+AutoEnable=true
+EOF
+else
+  log "WARN" "/etc/bluetooth/main.conf not found. Bluetooth config skipped."
+fi
+
 # --- LAPTOP POWER CONFIGURATION ---
 if [[ "$HOST_PROFILE" == "lnvo" ]]; then
   log "INFO" "Profile 'lnvo' detected: Injecting custom logind.conf..."
