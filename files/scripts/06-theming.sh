@@ -27,8 +27,7 @@ install_external_fonts() {
     ['NerdFontsSymbolsOnly']=""
 
     # From URL
-    ['Fira-Sans']="\
-    https://raw.githubusercontent.com/mozilla/Fira/refs/heads/master/ttf/FiraSans-Regular.ttf"
+    ['Fira-Sans']="https://raw.githubusercontent.com/mozilla/Fira/refs/heads/master/ttf/FiraSans-Regular.ttf"
   )
 
   if [[ ${#EXTRA_FONTS[@]} -gt 0 ]]; then
@@ -90,7 +89,7 @@ install_ms_fonts() {
   log "INFO" "Installing Microsoft fonts..."
 
   local ms_fonts_rpm_url="https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm"
-  rpm -i "$ms_fonts_rpm_url" || {
+  rpm -i --nodigest --nosignature "$ms_fonts_rpm_url" || {
     err "Failed to install msttcore-fonts-installer" && return 1
   }
   fc-cache -fv
