@@ -205,17 +205,23 @@ build-qcow2 $target_image=("localhost/" + image_name) $tag=default_tag: && (_bui
 [group('Build Virtal Machine Image')]
 build-raw $target_image=("localhost/" + image_name) $tag=default_tag: && (_build-bib target_image tag "raw" "disk_config/disk.toml")
 
-# Build an ISO virtual machine image
-[group('Build Virtal Machine Image')]
-# Master ISO command
-# Usage: just iso <profile> <source>
-# Example: just iso asus ghcr   (Builds Desktop, installs pointing to GitHub)
-# Example: just iso lnvo local  (Builds Laptop, installs pointing to nothing/local)
+
+# --- ISO BUILDERS ---
+
+# Build BOTH ISOs (Desktop & Laptop) sequentially
+[group('Distribution')]
+iso-all source="ghcr":
+    just iso asus {{source}}
+    just iso lnvo {{source}}
+
+# Master ISO command: just iso <profile> <source>
+# Example: just iso asus local
+[group('Distribution')]
 iso profile source="ghcr":
     #!/usr/bin/env bash
     set -eou pipefail
 
-    # 1. Determine Image Name based on Profile
+    # 1. Logic: Map Profile to Image Name
     if [[ "{{profile}}" == "asus" ]]; then
         IMAGE_NAME="mina-fedora-atomic-desktop"
     elif [[ "{{profile}}" == "lnvo" ]]; then
@@ -228,7 +234,7 @@ iso profile source="ghcr":
     echo "🏗️  Phase 1: Building Container ($IMAGE_NAME)..."
     just build "$IMAGE_NAME" "{{profile}}" "latest"
 
-    # 2. Configure the Switch Command based on Source
+    # 2. Logic: Configure the Installer Switch Command
     SWITCH_CMD=""
     if [[ "{{source}}" == "ghcr" ]]; then
         REGISTRY="ghcr.io/mina-atef-00"
@@ -239,19 +245,18 @@ iso profile source="ghcr":
         SWITCH_CMD="# Local build selected. No bootc switch performed."
     fi
 
-    # 3. Generate Temporary TOML
-    # We read iso-base.toml and replace the placeholder with our command
+    # 3. Logic: Generate the TOML config
     echo "📄 Phase 3: Generating installer config..."
-    sed "s|{{ BOOTC_SWITCH_COMMAND }}|$SWITCH_CMD|g" disk_config/iso-base.toml > disk_config/_generated.toml
+    sed "s|@@BOOTC_SWITCH_COMMAND@@|$SWITCH_CMD|g" disk_config/iso-base.toml > disk_config/_generated.toml
 
-    # 4. Run Bootc Image Builder
+    # 4. Logic: Run the Image Builder
     echo "💿 Phase 4: Baking ISO..."
     just _build-bib "$IMAGE_NAME" "latest" "iso" "disk_config/_generated.toml"
 
-    # 5. Cleanup and Rename
+    # 5. Logic: Cleanup
     rm disk_config/_generated.toml
     
-    # Rename output to avoid overwriting
+    # Rename output
     OUTPUT_NAME="output/install-{{profile}}-{{source}}.iso"
     mv output/bootiso/install.iso "$OUTPUT_NAME"
     

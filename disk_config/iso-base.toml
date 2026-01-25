@@ -5,7 +5,7 @@ contents = """
 # The Justfile will inject the correct command here.
 # If local: It will be a comment (no switch).
 # If remote: It will be 'bootc switch ... ghcr.io/...'
-{{ BOOTC_SWITCH_COMMAND }}
+@@BOOTC_SWITCH_COMMAND@@
 %end
 """
 
