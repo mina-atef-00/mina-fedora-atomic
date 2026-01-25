@@ -25,8 +25,4 @@ else
   echo "mina-atomic" >/etc/hostname
 fi
 
-# --- CONFIG: TIMEZONE ---
-log "INFO" "Setting timezone to Africa/Cairo..."
-ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime
-
 log "INFO" "Environment Prepared."
