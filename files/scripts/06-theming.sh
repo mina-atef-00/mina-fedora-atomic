@@ -97,9 +97,36 @@ install_ms_fonts() {
   log "INFO" "Microsoft fonts installed."
 }
 
+change_papirus_folders_colors() {
+  log "INFO" "Configuring Papirus Icon Theme..."
+
+  # Install the tool from source
+  local TMP_DIR="/tmp/papirus-folders"
+  rm -rf "$TMP_DIR"
+  log "INFO" "Cloning papirus-folders tool..."
+  git clone --depth 1 https://github.com/PapirusDevelopmentTeam/papirus-folders.git "$TMP_DIR"
+
+  # Install the script to /usr/bin so it's available in the final OS
+  chmod +x "${TMP_DIR}/papirus-folders"
+  cp "${TMP_DIR}/papirus-folders" /usr/bin/
+
+  # 2. Apply the new color
+  if [ -d "/usr/share/icons/Papirus" ]; then
+    log "INFO" "Applying $1 color to Papirus theme..."
+    papirus-folders -C "$1"
+  else
+    log "WARN" "Papirus icon theme not found at /usr/share/icons/Papirus. Skipping coloring."
+  fi
+
+  # Cleanup
+  rm -rf "$TMP_DIR"
+  log "INFO" "Papirus folder colors updated to $1."
+}
+
 # Main
 install_rpm_fonts
 install_external_fonts
 install_ms_fonts
+change_papirus_folders_colors "violet"
 
 dnf5 clean all
