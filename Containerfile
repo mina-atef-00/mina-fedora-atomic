@@ -4,7 +4,7 @@ COPY files /files
 
 FROM ghcr.io/ublue-os/akmods-nvidia-open:main-43 AS akmods-nvidia
 FROM ghcr.io/ublue-os/akmods:main-43 AS akmods-common
-FROM ghcr.io/ublue-os/base-main:latest
+FROM ghcr.io/ublue-os/base-main:43
 
 ARG HOST_PROFILE
 ARG IMAGE_NAME

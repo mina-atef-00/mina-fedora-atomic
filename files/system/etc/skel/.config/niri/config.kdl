@@ -176,6 +176,9 @@ binds {
     Mod+Equal { switch-preset-column-width; }
     Mod+Minus { switch-preset-column-width-back; }
 
+    Mod+KP_Add { switch-preset-column-width; }
+    Mod+KP_Subtract { switch-preset-column-width-back; }
+
     // -- Mouse Click Actions --
     Mod+MouseMiddle  { maximize-column; }
 
@@ -216,8 +219,8 @@ binds {
     XF86AudioPause       { spawn "dms" "ipc" "call" "mpris" "playPause"; }
     XF86AudioPrev        { spawn "dms" "ipc" "call" "mpris" "previous"; }
     XF86AudioNext        { spawn "dms" "ipc" "call" "mpris" "next"; }
-    XF86MonBrightnessUp  { spawn "dms" "ipc" "call" "brightness" "increment" "5"; }
-    XF86MonBrightnessDown { spawn "dms" "ipc" "call" "brightness" "decrement" "5"; }
+    XF86MonBrightnessUp  { spawn "dms" "ipc" "call" "brightness" "increment" "5" "intel_backlight"; }
+    XF86MonBrightnessDown { spawn "dms" "ipc" "call" "brightness" "decrement" "5" "intel_backlight"; }
 
     Mod+F1 { spawn "dms" "ipc" "call" "audio" "increment" "5"; }
     Mod+F2 { spawn "dms" "ipc" "call" "audio" "decrement" "5"; }
@@ -227,10 +230,8 @@ binds {
     Mod+F6 { spawn "dms" "ipc" "call" "mpris" "pause"; }
     Mod+F7 { spawn "dms" "ipc" "call" "mpris" "previous"; }
     Mod+F8 { spawn "dms" "ipc" "call" "mpris" "next"; }
-    Mod+F11 { spawn "dms" "ipc" "call" "brightness" "increment" "5"; }
-    Mod+F12 { spawn "dms" "ipc" "call" "brightness" "decrement" "5"; }
 
-    Mod+Shift+Slash { show-hotkey-overlay; }
+    Mod+Slash { show-hotkey-overlay; }
 }
 
 include "dms/colors.kdl"

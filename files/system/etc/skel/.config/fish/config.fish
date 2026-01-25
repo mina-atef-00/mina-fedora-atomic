@@ -36,5 +36,5 @@ alias y="yazi"
 alias free="free -h"
 alias df="df -h"
 
-# NPM in FHS environment
-alias npx="steam-run npx"
+# sync from /etc/skel
+alias ss="rsynv -av /etc/skel/.config $HOME/.config"

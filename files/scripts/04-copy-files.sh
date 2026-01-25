@@ -77,6 +77,41 @@ if [ -d "/usr/lib/bootc/kargs.d" ]; then
   log "INFO" "Bootc Kernel Arguments detected and applied via overlay."
 fi
 
+# --- LAPTOP POWER CONFIGURATION ---
+if [[ "$HOST_PROFILE" == "lnvo" ]]; then
+  log "INFO" "Profile 'lnvo' detected: Injecting custom logind.conf..."
+
+  # Ensure the drop-in directory exists
+  mkdir -p /etc/systemd/logind.conf.d
+
+  # Write the configuration
+  cat <<EOF >/etc/systemd/logind.conf.d/10-mina-power.conf
+[Login]
+# BATTERY BEHAVIOR: Sleep to save power
+HandleLidSwitch=suspend
+
+# CHARGING BEHAVIOR: Stay awake (Clamshell/Server mode)
+HandleLidSwitchExternalPower=ignore
+
+# DOCKED BEHAVIOR: Stay awake
+HandleLidSwitchDocked=ignore
+
+# HARDWARE KEYS
+HandlePowerKey=poweroff
+HandleSuspendKey=suspend
+HandleRebootKey=reboot
+
+# IDLE BEHAVIOR (Optional safety net)
+# If system is idle for 20 mins on battery, suspend.
+# IdleAction=suspend
+# IdleActionSec=20min
+EOF
+
+  chmod 644 /etc/systemd/logind.conf.d/10-mina-power.conf
+  log "INFO" "Power management configured for Laptop."
+fi
+
+# 6. TIMEZONE SETUP
 log "INFO" "Setting system timezone to Africa/Cairo..."
 ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime
 
