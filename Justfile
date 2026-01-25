@@ -13,7 +13,7 @@ default:
 # Check Just Syntax
 [group('Just')]
 check:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     find . -type f -name "*.just" | while read -r file; do
     	echo "Checking syntax: $file"
     	just --unstable --fmt --check -f $file
@@ -24,7 +24,7 @@ check:
 # Fix Just Syntax
 [group('Just')]
 fix:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     find . -type f -name "*.just" | while read -r file; do
     	echo "Checking syntax: $file"
     	just --unstable --fmt -f $file
@@ -35,7 +35,7 @@ fix:
 # Clean Repo
 [group('Utility')]
 clean:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     set -eoux pipefail
     touch _build
     find *_build* -exec rm -rf {} \;
@@ -54,20 +54,12 @@ sudo-clean:
 [group('Utility')]
 [private]
 sudoif command *args:
-    #!/usr/bin/bash
-    function sudoif(){
-        if [[ "${UID}" -eq 0 ]]; then
-            "$@"
-        elif [[ "$(command -v sudo)" && -n "${SSH_ASKPASS:-}" ]] && [[ -n "${DISPLAY:-}" || -n "${WAYLAND_DISPLAY:-}" ]]; then
-            /usr/bin/sudo --askpass "$@" || exit 1
-        elif [[ "$(command -v sudo)" ]]; then
-            /usr/bin/sudo "$@" || exit 1
-        else
-            exit 1
-        fi
-    }
-    sudoif {{ command }} {{ args }}
-
+    #!/usr/bin/env bash
+    if [[ "${UID}" -eq 0 ]]; then
+        {{ command }} {{ args }}
+    else
+        sudo {{ command }} {{ args }}
+    fi
 # This Justfile recipe builds a container image using Podman.
 #
 # Arguments:
@@ -86,18 +78,27 @@ sudoif command *args:
 #
 
 # Build the image using the specified parameters
-build $target_image=image_name $tag=default_tag:
+# Usage: just build <image_name> <profile> <tag>
+build target_image profile tag="latest":
     #!/usr/bin/env bash
+    set -eou pipefail
 
     BUILD_ARGS=()
+    BUILD_ARGS+=("--build-arg" "HOST_PROFILE={{ profile }}")
+    BUILD_ARGS+=("--build-arg" "IMAGE_NAME={{ target_image }}")
+    
     if [[ -z "$(git status -s)" ]]; then
-        BUILD_ARGS+=("--build-arg" "SHA_HEAD_SHORT=$(git rev-parse --short HEAD)")
+        SHA=$(git rev-parse --short HEAD)
+        BUILD_ARGS+=("--build-arg" "SHA_HEAD_SHORT=$SHA")
     fi
 
+    echo "🏗️ Building localhost/{{ target_image }} for profile: {{ profile }}..."
+    
+    # We explicitly add localhost/ to the tag
     podman build \
         "${BUILD_ARGS[@]}" \
         --pull=newer \
-        --tag "${target_image}:${tag}" \
+        --tag "localhost/{{ target_image }}:{{ tag }}" \
         .
 
 # Command: _rootful_load_image
@@ -117,36 +118,37 @@ build $target_image=image_name $tag=default_tag:
 # 3. If the image is found, load it into rootful podman using podman scp.
 # 4. If the image is not found, pull it from the remote repository into reootful podman.
 
-_rootful_load_image $target_image=image_name $tag=default_tag:
-    #!/usr/bin/bash
-    set -eoux pipefail
+_rootful_load_image target_image tag:
+    #!/usr/bin/env bash
+    set -eou pipefail
 
-    # Check if already running as root or under sudo
     if [[ -n "${SUDO_USER:-}" || "${UID}" -eq "0" ]]; then
-        echo "Already root or running under sudo, no need to load image from user podman."
+        echo "Already root, skipping sync."
         exit 0
     fi
 
-    # Try to resolve the image tag using podman inspect
-    set +e
-    resolved_tag=$(podman inspect -t image "${target_image}:${tag}" | jq -r '.[].RepoTags.[0]')
-    return_code=$?
-    set -e
+    # 🧙‍♂️ Fix: Do NOT prepend localhost/ here. 
+    # The caller (iso recipe) already provides the full name.
+    FULL_NAME="{{ target_image }}:{{ tag }}"
 
-    USER_IMG_ID=$(podman images --filter reference="${target_image}:${tag}" --format "'{{ '{{.ID}}' }}'")
+    if ! podman image exists "$FULL_NAME"; then
+        echo "❌ Image $FULL_NAME not found in user storage. Build it first."
+        exit 1
+    fi
 
-    if [[ $return_code -eq 0 ]]; then
-        # If the image is found, load it into rootful podman
-        ID=$(just sudoif podman images --filter reference="${target_image}:${tag}" --format "'{{ '{{.ID}}' }}'")
-        if [[ "$ID" != "$USER_IMG_ID" ]]; then
-            # If the image ID is not found or different from user, copy the image from user podman to root podman
-            COPYTMP=$(mktemp -p "${PWD}" -d -t _build_podman_scp.XXXXXXXXXX)
-            just sudoif TMPDIR=${COPYTMP} podman image scp ${UID}@localhost::"${target_image}:${tag}" root@localhost::"${target_image}:${tag}"
-            rm -rf "${COPYTMP}"
-        fi
+    # Use quiet mode (-q) to get ID only, head -n 1 to handle duplicates
+    USER_IMG_ID=$(podman images -q "$FULL_NAME" | head -n 1)
+    
+    # Check Root storage
+    ROOT_IMG_ID=$(just sudoif podman images -q "$FULL_NAME" | head -n 1) || true
+
+    if [[ "$USER_IMG_ID" != "$ROOT_IMG_ID" ]]; then
+        echo "🔄 Syncing image $FULL_NAME from User to Root storage via stream..."
+        # Stream from User -> Pipe -> Load as Root
+        podman save "$FULL_NAME" | just sudoif podman load
+        echo "✅ Sync complete."
     else
-        # If the image is not found, pull it from the repository
-        just sudoif podman pull "${target_image}:${tag}"
+        echo "✅ Image IDs match. No sync required."
     fi
 
 # Build a bootc bootable image using Bootc Image Builder (BIB)
@@ -221,45 +223,38 @@ iso profile source="ghcr":
     #!/usr/bin/env bash
     set -eou pipefail
 
-    # 1. Logic: Map Profile to Image Name
-    if [[ "{{profile}}" == "asus" ]]; then
-        IMAGE_NAME="mina-fedora-atomic-desktop"
-    elif [[ "{{profile}}" == "lnvo" ]]; then
-        IMAGE_NAME="mina-fedora-atomic-laptop"
+    if [[ "{{ profile }}" == "asus" ]]; then
+        BASE_NAME="mina-fedora-atomic-desktop"
+    elif [[ "{{ profile }}" == "lnvo" ]]; then
+        BASE_NAME="mina-fedora-atomic-laptop"
     else
-        echo "❌ Error: Unknown profile '{{profile}}'. Use 'asus' or 'lnvo'."
+        echo "❌ Error: Unknown profile '{{ profile }}'."
         exit 1
     fi
 
-    echo "🏗️  Phase 1: Building Container ($IMAGE_NAME)..."
-    just build "$IMAGE_NAME" "{{profile}}" "latest"
+    echo "🏗️  Phase 1: Building Container (localhost/$BASE_NAME)..."
+    just build "$BASE_NAME" "{{ profile }}" "latest"
 
-    # 2. Logic: Configure the Installer Switch Command
     SWITCH_CMD=""
-    if [[ "{{source}}" == "ghcr" ]]; then
+    if [[ "{{ source }}" == "ghcr" ]]; then
         REGISTRY="ghcr.io/mina-atef-00"
         echo "🔗 Phase 2: Configuring Installer to pull from $REGISTRY"
-        SWITCH_CMD="bootc switch --mutate-in-place --transport registry ${REGISTRY}/${IMAGE_NAME}:latest"
+        SWITCH_CMD="bootc switch --mutate-in-place --transport registry ${REGISTRY}/${BASE_NAME}:latest"
     else
-        echo "🏠 Phase 2: Local Mode. Installer will NOT switch to remote registry."
+        echo "🏠 Phase 2: Local Mode."
         SWITCH_CMD="# Local build selected. No bootc switch performed."
     fi
 
-    # 3. Logic: Generate the TOML config
     echo "📄 Phase 3: Generating installer config..."
     sed "s|@@BOOTC_SWITCH_COMMAND@@|$SWITCH_CMD|g" disk_config/iso-base.toml > disk_config/_generated.toml
 
-    # 4. Logic: Run the Image Builder
     echo "💿 Phase 4: Baking ISO..."
-    just _build-bib "$IMAGE_NAME" "latest" "iso" "disk_config/_generated.toml"
+    # CRITICAL: We pass "localhost/$BASE_NAME" here
+    just _build-bib "localhost/$BASE_NAME" "latest" "iso" "disk_config/_generated.toml"
 
-    # 5. Logic: Cleanup
     rm disk_config/_generated.toml
-    
-    # Rename output
-    OUTPUT_NAME="output/install-{{profile}}-{{source}}.iso"
+    OUTPUT_NAME="output/install-{{ profile }}-{{ source }}.iso"
     mv output/bootiso/install.iso "$OUTPUT_NAME"
-    
     echo "✅ Success! ISO created at: $OUTPUT_NAME"
 
 # Rebuild a QCOW2 virtual machine image
@@ -276,7 +271,7 @@ rebuild-iso $target_image=("localhost/" + image_name) $tag=default_tag: && (_reb
 
 # Run a virtual machine with the specified image type and configuration
 _run-vm $target_image $tag $type $config:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     set -eoux pipefail
 
     # Determine the image file based on the type
@@ -341,7 +336,7 @@ spawn-vm rebuild="0" type="qcow2" ram="6G":
       -M "bootc-image" \
       --console=gui \
       --cpus=2 \
-      --ram=$(echo {{ ram }}| /usr/bin/numfmt --from=iec) \
+      --ram=$(echo {{ ram }}| /usr/bin/env numfmt --from=iec) \
       --network-user-mode \
       --vsock=false --pass-ssh-key=false \
       -i ./output/**/*.{{ type }}
@@ -357,7 +352,7 @@ lint:
         exit 1
     fi
     # Run shellcheck on all Bash scripts
-    /usr/bin/find . -iname "*.sh" -type f -exec shellcheck "{}" ';'
+    /usr/bin/env find . -iname "*.sh" -type f -exec shellcheck "{}" ';'
 
 # Runs shfmt on all Bash scripts
 format:
@@ -369,4 +364,4 @@ format:
         exit 1
     fi
     # Run shfmt on all Bash scripts
-    /usr/bin/find . -iname "*.sh" -type f -exec shfmt --write "{}" ';'
+    /usr/bin/env find . -iname "*.sh" -type f -exec shfmt --write "{}" ';'
