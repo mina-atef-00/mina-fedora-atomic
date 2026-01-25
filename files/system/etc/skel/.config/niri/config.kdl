@@ -219,8 +219,8 @@ binds {
     XF86AudioPause       { spawn "dms" "ipc" "call" "mpris" "playPause"; }
     XF86AudioPrev        { spawn "dms" "ipc" "call" "mpris" "previous"; }
     XF86AudioNext        { spawn "dms" "ipc" "call" "mpris" "next"; }
-    XF86MonBrightnessUp  { spawn "dms" "ipc" "call" "brightness" "increment" "5" "intel_backlight"; }
-    XF86MonBrightnessDown { spawn "dms" "ipc" "call" "brightness" "decrement" "5" "intel_backlight"; }
+    XF86MonBrightnessUp  { spawn "dms" "ipc" "call" "brightness" "increment" "5" "backlight:intel_backlight"; }
+    XF86MonBrightnessDown { spawn "dms" "ipc" "call" "brightness" "decrement" "5" "backlight:intel_backlight"; }
 
     Mod+F1 { spawn "dms" "ipc" "call" "audio" "increment" "5"; }
     Mod+F2 { spawn "dms" "ipc" "call" "audio" "decrement" "5"; }

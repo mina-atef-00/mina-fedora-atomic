@@ -37,4 +37,4 @@ alias free="free -h"
 alias df="df -h"
 
 # sync from /etc/skel
-alias ss="rsynv -av /etc/skel/.config $HOME/.config"
+alias ss="rsync -av /etc/skel/.config $HOME/.config"
