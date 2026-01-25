@@ -4,26 +4,27 @@ source "${SCRIPTS_DIR}/lib.sh"
 
 log "INFO" "Installing themes..."
 
-log "INFO" "Installing RPM fonts..."
-# RPM Fonts
-dnf5 install -y \
-  "jetbrains-mono-fonts" \
-  "rsms-inter-fonts" \
-  "fira-code-fonts" \
-  "google-noto-serif-cjk-fonts" \
-  "google-roboto-slab-fonts" \
-  "terminus-fonts"
+install_rpm_fonts() {
+  log "INFO" "Installing RPM fonts..."
 
-log "INFO" "Installing external fonts..."
+  dnf5 install -y \
+    "jetbrains-mono-fonts" \
+    "rsms-inter-fonts" \
+    "fira-code-fonts" \
+    "google-noto-serif-cjk-fonts" \
+    "google-roboto-slab-fonts" \
+    "terminus-fonts"
+}
 
 install_external_fonts() {
-  log "INFO" "Defining Fonts"
+  log "INFO" "Installing External fonts..."
+
   local -A EXTRA_FONTS=(
     # Nerd Fonts
     # When Nerd Font name is correct, URL is not needed
-    ['JetBrainsMono']=
-    ['FiraCode']=
-    ['NerdFontsSymbolsOnly']=
+    ['JetBrainsMono']=""
+    ['FiraCode']=""
+    ['NerdFontsSymbolsOnly']=""
 
     # From URL
     ['Fira-Sans']="\
@@ -31,7 +32,6 @@ install_external_fonts() {
   )
 
   if [[ ${#EXTRA_FONTS[@]} -gt 0 ]]; then
-    log "INFO" "Installing Extra Font(s)"
     local FONTS_DIR="/usr/share/fonts"
     local TMP_DIR="/tmp/extra_fonts"
     local nf_repo="https://github.com/ryanoasis/nerd-fonts/releases/latest/download"
@@ -46,6 +46,7 @@ install_external_fonts() {
         font_dest="${FONTS_DIR}/nerd-fonts/${font_name}"
       }
       url_file="$(basename "$font_url")"
+
       log "INFO" "Adding font(s): ${font_name}"
       log "INFO" "From URL: ${font_url}"
 
@@ -69,6 +70,7 @@ install_external_fonts() {
         -exec cp -vf {} "$font_dest"/ \;
     done
     rm -rf "$TMP_DIR"
+
     log "INFO" "Extra Font(s) installed"
   fi
 
@@ -83,5 +85,22 @@ install_external_fonts() {
   fc-cache --system-only --really-force "$FONTS_DIR"
   log "INFO" "Done"
 }
+
+install_ms_fonts() {
+  log "INFO" "Installing Microsoft fonts..."
+
+  local ms_fonts_rpm_url="https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm"
+  rpm -i "$ms_fonts_rpm_url" || {
+    err "Failed to install msttcore-fonts-installer" && return 1
+  }
+  fc-cache -fv
+
+  log "INFO" "Microsoft fonts installed."
+}
+
+# Main
+install_rpm_fonts
+install_external_fonts
+install_ms_fonts
 
 dnf5 clean all
