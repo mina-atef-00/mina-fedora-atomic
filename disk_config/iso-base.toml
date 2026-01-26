@@ -1,10 +1,25 @@
 [customizations.installer.kickstart]
 contents = """
-%post
-# !!! PRE-CONFIGURED BOOTC SWITCH !!!
-# The Justfile will inject the correct command here.
-# If local: It will be a comment (no switch).
-# If remote: It will be 'bootc switch ... ghcr.io/...'
+# Switch to Graphical mode (Interactive GUI)
+graphical
+
+# Set basic language/keyboard defaults so it doesn't ask for that, 
+# but DOES ask for the rest.
+lang en_US.UTF-8
+keyboard --xlayouts='us'
+
+# We REMOVED 'clearpart' and 'autopart' so it forces you to open 
+# the Storage menu to select a disk.
+
+# We REMOVED 'timezone' so it forces you to select it.
+
+# Keep root locked (Assuming you added your user in the Containerfile)
+rootpw --lock
+
+# Optional: Do not reboot automatically so you can see the success screen
+# reboot
+
+%post --erroronfail --log=/var/log/anaconda/post-install.log
 @@BOOTC_SWITCH_COMMAND@@
 %end
 """
@@ -16,9 +31,10 @@ enable = [
   "org.fedoraproject.Anaconda.Modules.Network",
   "org.fedoraproject.Anaconda.Modules.Timezone", 
   "org.fedoraproject.Anaconda.Modules.Services",
+  "org.fedoraproject.Anaconda.Modules.Localization" 
 ]
 disable = [
   "org.fedoraproject.Anaconda.Modules.Security",
-  "org.fedoraproject.Anaconda.Modules.Users",        # Declaratively defined
+  "org.fedoraproject.Anaconda.Modules.Users",       
   "org.fedoraproject.Anaconda.Modules.Subscription",
 ]
