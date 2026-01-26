@@ -15,14 +15,4 @@ mkdir -vp /etc/environment.d
 # To make /opt immutable, needed for some rpm? packages (browsers, docker-desktop)
 rm -v /opt && mkdir -vp /opt
 
-# --- CONFIG: HOSTNAME ---
-log "INFO" "Setting Hostname..."
-if [[ "$HOST_PROFILE" == "asus" ]]; then
-  echo "asus" >/etc/hostname
-elif [[ "$HOST_PROFILE" == "lnvo" ]]; then
-  echo "lnvo" >/etc/hostname
-else
-  echo "mina-atomic" >/etc/hostname
-fi
-
 log "INFO" "Environment Prepared."

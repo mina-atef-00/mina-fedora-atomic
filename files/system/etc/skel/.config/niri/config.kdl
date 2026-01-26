@@ -198,7 +198,7 @@ binds {
     Mod+Shift+T { spawn "kitty" "-e" "btm"; }
     Mod+Shift+O { spawn "kitty" "-e" "opencode"; }
     Mod+Shift+D { spawn "vesktop"; }
-    Mod+Shift+N { spawn "zed"; }
+    Mod+Shift+N { spawn "flatpak run dev.zed.Zed"; }
 
     // -- DMS Integration --
     Mod+Ctrl+V { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
