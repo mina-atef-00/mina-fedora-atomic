@@ -7,6 +7,9 @@ fish_add_path $HOME/.pub-cache/bin
 zoxide init fish | source
 fzf --fish | source
 starship init fish | source
+set -gx EDITOR nvim
+set -gx VISUAL "flatpak run dev.zed.Zed --wait"
+fish_add_path /usr/sbin
 
 # Basic navigation with eza
 alias ll="eza -l --icons --group-directories-first"

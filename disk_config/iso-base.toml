@@ -3,21 +3,8 @@ contents = """
 # Switch to Graphical mode (Interactive GUI)
 graphical
 
-# Set basic language/keyboard defaults so it doesn't ask for that, 
-# but DOES ask for the rest.
 lang en_US.UTF-8
 keyboard --xlayouts='us'
-
-# We REMOVED 'clearpart' and 'autopart' so it forces you to open 
-# the Storage menu to select a disk.
-
-# We REMOVED 'timezone' so it forces you to select it.
-
-# Keep root locked (Assuming you added your user in the Containerfile)
-rootpw --lock
-
-# Optional: Do not reboot automatically so you can see the success screen
-# reboot
 
 %post --erroronfail --log=/var/log/anaconda/post-install.log
 @@BOOTC_SWITCH_COMMAND@@

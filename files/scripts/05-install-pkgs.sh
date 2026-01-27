@@ -7,12 +7,14 @@ log "INFO" "Starting Package Management..."
 # --- 1. DRIVER INSTALLATION (UBlue Akmods) ---
 log "INFO" "Checking for Akmods..."
 
-# Enable RPM Fusion Free Repo (NVIDIA dependencies)
+# Enable RPM Fusion Free AND Non-Free (Needed for unrar & codecs)
 dnf5 install -y "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
+dnf5 install -y "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
 
 # Common Akmods (v4l2loopback, ublue-os-addons)
 if [ -d "/tmp/rpms/akmods-common" ]; then
   log "INFO" "Installing Common Akmods..."
+  # Use shell expansion safely
   dnf5 install -y /tmp/rpms/akmods-common/ublue-os/ublue-os-akmods*.rpm
   dnf5 install -y /tmp/rpms/akmods-common/kmods/kmod-v4l2loopback*.rpm
 fi
@@ -31,9 +33,6 @@ elif [[ "$HOST_PROFILE" == "lnvo" ]]; then
   log "INFO" ">> Profile LNVO: Installing Intel/Laptop Drivers..."
   dnf5 install -y brightnessctl libva-intel-media-driver
 fi
-
-# Cleanup RPM Fusion Repo
-dnf5 remove -y rpmfusion-free-release
 
 # --- 2. REPOSITORY SETUP ---
 log "INFO" "Enabling COPR Repositories..."
@@ -156,8 +155,11 @@ PKGS=(
 log "INFO" "Installing Main Packages..."
 dnf5 install -y "${PKGS[@]}"
 
-# --- 4. DEBLOAT ---
-# CRITICAL: DO NOT REMOVE dgop OR dms WILL BREAK
+# --- 4. CONFIGURATION FIXES ---
+log "INFO" "Setting default user shell to Fish..."
+sed -i 's|SHELL=/bin/bash|SHELL=/usr/bin/fish|' /etc/default/useradd
+
+# --- 5. DEBLOAT ---
 REMOVE_PKGS=(
   "firefox"
   "firefox-langpacks"
@@ -172,12 +174,15 @@ REMOVE_PKGS=(
   "nodejs"
   "nodejs-docs"
   "nodejs-full-i18n"
+  # Clean up RPM Fusion Release packages (but keep keys/libs installed)
+  "rpmfusion-free-release"
+  "rpmfusion-nonfree-release"
 )
 
 log "INFO" "Removing Unwanted Packages..."
 dnf5 remove -y "${REMOVE_PKGS[@]}"
 
-# --- 5. CLEANUP REPOS ---
+# --- 6. CLEANUP REPOS ---
 log "INFO" "Disabling COPRs to keep runtime clean..."
 for copr in "${COPR_LIST[@]}"; do
   dnf5 -y copr disable "$copr"

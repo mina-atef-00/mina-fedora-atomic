@@ -6,6 +6,7 @@ source "${SCRIPTS_DIR}/lib.sh"
 
 # Services to be explicitly enabled
 ENABLED_SERVICES=(
+  "force-unblock-radios.service"
   "greetd.service"
   "bluetooth.service"
   "power-profiles-daemon.service"
