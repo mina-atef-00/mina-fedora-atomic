@@ -111,7 +111,7 @@ window-rule {
 binds {
     // -- Core --
     Mod+Return { spawn "kitty"; }
-    Mod+Shift+F { spawn "zen"; }
+    Mod+Shift+F { spawn "flatpak" "run" "app.zen_browser.zen"; }
     Mod+W repeat=false { close-window; }
     Mod+O { toggle-window-floating; }
     Mod+Tab { toggle-overview; }
@@ -148,7 +148,7 @@ binds {
     Mod+Shift+3 { move-column-to-workspace 3; }
     Mod+Shift+4 { move-column-to-workspace 4; }
     Mod+Shift+5 { move-column-to-workspace 5; }
- 
+
 
     // -- Focus Workspaces (Up/Down) --
     Mod+Ctrl+Up   { focus-workspace-up; }
@@ -198,7 +198,7 @@ binds {
     Mod+Shift+T { spawn "kitty" "-e" "btm"; }
     Mod+Shift+O { spawn "kitty" "-e" "opencode"; }
     Mod+Shift+D { spawn "vesktop"; }
-    Mod+Shift+N { spawn "flatpak run dev.zed.Zed"; }
+    Mod+Shift+N { spawn "flatpak" "run" "dev.zed.Zed"; }
 
     // -- DMS Integration --
     Mod+Ctrl+V { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
@@ -238,5 +238,3 @@ include "dms/colors.kdl"
 include "dms/layout.kdl"
 include "dms/alttab.kdl"
 include "dms/binds.kdl"
-
-

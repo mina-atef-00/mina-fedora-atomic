@@ -38,6 +38,9 @@ alias o="opencode"
 alias y="yazi"
 alias free="free -h"
 alias df="df -h"
+alias lg="lazygit"
+alias zed="flatpak run dev.zed.Zed --wait"
+alias zen="flatpak run app.zen_browser.zen"
 
 # sync from /etc/skel
-alias ss="rsync -av /etc/skel/.config $HOME/.config"
+alias skel="rsync -av /etc/skel/.config $HOME/.config"
