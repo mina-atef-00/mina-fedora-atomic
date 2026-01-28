@@ -1,21 +1,21 @@
 [Default Applications]
 # Browser
-x-scheme-handler/http=app.zen_browser.Zen.desktop
-x-scheme-handler/https=app.zen_browser.Zen.desktop
-text/html=app.zen_browser.Zen.desktop
-application/xhtml+xml=app.zen_browser.Zen.desktop
+x-scheme-handler/http=app.zen_browser.zen.desktop
+x-scheme-handler/https=app.zen_browser.zen.desktop
+text/html=app.zen_browser.zen.desktop
+application/xhtml+xml=app.zen_browser.zen.desktop
 
 # Terminal
 x-scheme-handler/terminal=kitty.desktop
 
 # Text Editor
-text/plain=app.zed.Zed.desktop
-text/markdown=app.zed.Zed.desktop
-application/json=app.zed.Zed.desktop
-text/x-python=app.zed.Zed.desktop
-text/x-c=app.zed.Zed.desktop
-text/x-c++=app.zed.Zed.desktop
-application/x-shellscript=app.zed.Zed.desktop
+text/plain=dev.zed.Zed.desktop
+text/markdown=dev.zed.Zed.desktop
+application/json=dev.zed.Zed.desktop
+text/x-python=dev.zed.Zed.desktop
+text/x-c=dev.zed.Zed.desktop
+text/x-c++=dev.zed.Zed.desktop
+application/x-shellscript=dev.zed.Zed.desktop
 
 # Image Viewer
 image/png=org.gnome.Loupe.desktop

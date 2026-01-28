@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-set -oue pipefail
+# Set strict error handling
+set -euo pipefail
+
+# Check for the existence of the library before sourcing
+# shellcheck source=/dev/null
 source "${SCRIPTS_DIR}/lib.sh"
 
 log "INFO" "Starting Package Management..."
@@ -19,15 +23,61 @@ if [ -d "/tmp/rpms/akmods-common" ]; then
   dnf5 install -y /tmp/rpms/akmods-common/kmods/kmod-v4l2loopback*.rpm
 fi
 
-# Profile Specific Drivers
 if [[ "$HOST_PROFILE" == "asus" ]]; then
   log "INFO" ">> Profile ASUS: Installing NVIDIA Drivers..."
+
+  # Install kernel modules from ublue akmods
   if [ -d "/tmp/rpms/akmods-nvidia" ]; then
     dnf5 install -y /tmp/rpms/akmods-nvidia/ublue-os/ublue-os-nvidia*.rpm
     dnf5 install -y /tmp/rpms/akmods-nvidia/kmods/kmod-nvidia*.rpm
   fi
+
+  # Install full NVIDIA driver stack (userspace components)
+  dnf5 install -y --enablerepo=fedora-nvidia \
+    nvidia-driver \
+    nvidia-driver-cuda \
+    nvidia-driver-libs \
+    nvidia-modprobe \
+    nvidia-persistenced \
+    nvidia-settings \
+    libnvidia-fbc \
+    libva-nvidia-driver
+
+  # Blacklist nouveau (Fixed: Removed indentation within the file content)
+  cat > /usr/lib/modprobe.d/00-nouveau-blacklist.conf <<EOF
+blacklist nouveau
+options nouveau modeset=0
+EOF
+
+  # Configure dracut to force load NVIDIA (fixes black screen on boot)
+  if [ -f "/usr/lib/dracut/dracut.conf.d/99-nvidia.conf" ]; then
+    sed -i 's/omit_drivers/force_drivers/g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
+  fi
+
+  # Move nvidia-modeset config to correct location if it exists
+  if [ -f "/etc/modprobe.d/nvidia-modeset.conf" ]; then
+    mv /etc/modprobe.d/nvidia-modeset.conf /usr/lib/modprobe.d/nvidia-modeset.conf
+  fi
+
   # Desktop hardware tools
   dnf5 install -y i2c-tools ddcutil
+
+  # Create NVIDIA CDI service (Fixed: Heredoc alignment for systemd)
+  cat > /usr/lib/systemd/system/nvctk-cdi.service <<'EOF'
+[Unit]
+Description=nvidia container toolkit CDI auto-generation
+ConditionFileIsExecutable=/usr/bin/nvidia-ctk
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  systemctl enable nvctk-cdi.service
 
 elif [[ "$HOST_PROFILE" == "lnvo" ]]; then
   log "INFO" ">> Profile LNVO: Installing Intel/Laptop Drivers..."
@@ -157,7 +207,9 @@ dnf5 install -y "${PKGS[@]}"
 
 # --- 4. CONFIGURATION FIXES ---
 log "INFO" "Setting default user shell to Fish..."
-sed -i 's|SHELL=/bin/bash|SHELL=/usr/bin/fish|' /etc/default/useradd
+if [ -f /etc/default/useradd ]; then
+  sed -i 's|SHELL=/bin/bash|SHELL=/usr/bin/fish|' /etc/default/useradd
+fi
 
 # --- 5. DEBLOAT ---
 REMOVE_PKGS=(

@@ -125,6 +125,8 @@ EOF
   log "INFO" "Power management configured for Laptop."
 fi
 
+git config --global commit.gpgsign false
+
 # 6. TIMEZONE SETUP
 log "INFO" "Setting system timezone to Africa/Cairo..."
 ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime

@@ -42,6 +42,7 @@ layout {
         offset x=0 y=5
         color "#0007"
     }
+    border { off; }
 }
 
 hotkey-overlay {
@@ -73,6 +74,7 @@ window-rule {
 window-rule {
   match title="^(Picture-in-Picture|picture-in-Picture|Picture-in-picture|picture-in-picture)$"
   open-floating true
+  focus-ring { off; }
 }
 
 window-rule {
@@ -191,13 +193,15 @@ binds {
     Mod+Ctrl+WheelScrollUp { focus-workspace-up; }
     Mod+Ctrl+Shift+WheelScrollDown { move-column-to-workspace-down; }
     Mod+Ctrl+Shift+WheelScrollUp   { move-column-to-workspace-up; }
+    Mod+Alt+WheelScrollDown { switch-preset-column-width; }
+    Mod+Alt+WheelScrollUp   { switch-preset-column-width-back; }
 
     // -- Apps & Scripts --
     Mod+Shift+E { spawn "nautilus"; }
-    Mod+Shift+S { spawn "steam"; }
     Mod+Shift+T { spawn "kitty" "-e" "btm"; }
     Mod+Shift+O { spawn "kitty" "-e" "opencode"; }
-    Mod+Shift+D { spawn "vesktop"; }
+    Mod+Shift+S { spawn "flatpak" "run" "com.valvesoftware.Steam"; }
+    Mod+Shift+D { spawn "flatpak" "run" "dev.vencord.Vesktop"; }
     Mod+Shift+N { spawn "flatpak" "run" "dev.zed.Zed"; }
 
     // -- DMS Integration --
