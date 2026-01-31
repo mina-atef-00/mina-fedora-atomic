@@ -125,8 +125,6 @@ PKGS=(
   "kitty"
   "nautilus"
   "file-roller"
-  "mangohud"
-  "goverlay"
   "qalculate-gtk"
   "audacity"
   "sox"
