@@ -4,7 +4,15 @@ set -oue pipefail
 SCRIPTS_DIR="/ctx/files/scripts"
 source "${SCRIPTS_DIR}/lib.sh"
 
-log "INFO" "Layer 8: CLI Tools and GUI Utilities..."
+log "INFO" "Layer 5: CLI Tools and GUI Utilities..."
+
+# Enable COPR repositories needed for this layer
+log "INFO" "Enabling COPR repositories..."
+dnf5 -y copr enable lihaohong/yazi
+dnf5 -y copr enable alternateved/eza
+dnf5 -y copr enable atim/starship
+dnf5 -y copr enable lilay/topgrade
+dnf5 -y copr enable atim/bottom
 
 PKGS=(
   # CLI Tools
@@ -56,4 +64,15 @@ if [ -f /etc/default/useradd ]; then
   sed -i 's|SHELL=/bin/bash|SHELL=/usr/bin/fish|' /etc/default/useradd
 fi
 
-log "INFO" "Layer 8: Complete"
+# Store COPR list for later cleanup
+COPR_LIST=(
+  "avengemedia/dms"
+  "lihaohong/yazi"
+  "alternateved/eza"
+  "atim/starship"
+  "lilay/topgrade"
+  "atim/bottom"
+)
+printf '%s\n' "${COPR_LIST[@]}" > /tmp/copr-list.txt
+
+log "INFO" "Layer 5: Complete"

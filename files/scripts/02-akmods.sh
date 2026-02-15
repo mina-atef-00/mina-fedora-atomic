@@ -4,7 +4,22 @@ set -oue pipefail
 SCRIPTS_DIR="/ctx/files/scripts"
 source "${SCRIPTS_DIR}/lib.sh"
 
-log "INFO" "Layer 4: NVIDIA Kernel Modules..."
+log "INFO" "Layer 2: Kernel Modules (Akmods)..."
+
+# Install common akmods (v4l2loopback, ublue-os-addons)
+if [ -d "/tmp/akmods-common" ]; then
+  log "INFO" "Installing common akmods..."
+  
+  if [ -d "/tmp/akmods-common/ublue-os" ]; then
+    dnf5 install -y /tmp/akmods-common/ublue-os/ublue-os-akmods*.rpm || true
+  fi
+  
+  if [ -d "/tmp/akmods-common/kmods" ]; then
+    dnf5 install -y /tmp/akmods-common/kmods/kmod-v4l2loopback*.rpm || true
+  fi
+else
+  log "WARN" "Common akmods directory not found at /tmp/akmods-common"
+fi
 
 # Install NVIDIA kernel modules for ASUS profile
 if [[ "$HOST_PROFILE" == "asus" ]]; then
@@ -25,4 +40,4 @@ else
   log "INFO" "Profile is not 'asus', skipping NVIDIA kernel modules"
 fi
 
-log "INFO" "Layer 4: Complete"
+log "INFO" "Layer 2: Complete"

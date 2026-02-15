@@ -4,7 +4,7 @@ set -oue pipefail
 SCRIPTS_DIR="/ctx/files/scripts"
 source "${SCRIPTS_DIR}/lib.sh"
 
-log "INFO" "Layer 7: Multimedia, Codecs, Editors, and Git..."
+log "INFO" "Layer 4: Multimedia, Codecs, Editors, and Git..."
 
 PKGS=(
   # Multimedia & Codecs
@@ -26,4 +26,4 @@ PKGS=(
 
 dnf5 install -y "${PKGS[@]}"
 
-log "INFO" "Layer 7: Complete"
+log "INFO" "Layer 4: Complete"
