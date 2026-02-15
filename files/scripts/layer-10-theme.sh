@@ -199,19 +199,12 @@ if command -v gtk-update-icon-cache &>/dev/null; then
   done
 fi
 
-# Set default GTK theme
-mkdir -p /etc/skel/.config/gtk-3.0 /etc/skel/.config/gtk-4.0
-cat > /etc/skel/.config/gtk-3.0/settings.ini <<EOF
-[Settings]
-gtk-theme-name=adw-gtk3
-gtk-icon-theme-name=Papirus
-gtk-cursor-theme-name=Breeze_Snow
-EOF
-
+# Set default GTK4 theme (gtk-3.0 settings already in files/system)
+mkdir -p /etc/skel/.config/gtk-4.0
 cat > /etc/skel/.config/gtk-4.0/settings.ini <<EOF
 [Settings]
-gtk-theme-name=adw-gtk3
-gtk-icon-theme-name=Papirus
+gtk-theme-name=adw-gtk3-dark
+gtk-icon-theme-name=Papirus-Dark
 gtk-cursor-theme-name=Breeze_Snow
 EOF
 
