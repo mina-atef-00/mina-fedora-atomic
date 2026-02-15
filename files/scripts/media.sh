@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -oue pipefail
 
-SCRIPTS_DIR="/ctx/files/scripts"
-source "${SCRIPTS_DIR}/lib.sh"
+source "/ctx/files/scripts/lib.sh"
 
-log "INFO" "Layer 4: Multimedia, Codecs, Editors, and Git..."
+log "INFO" "Multimedia, Codecs, Editors, and Git..."
 
 PKGS=(
   # Multimedia & Codecs
@@ -26,4 +25,4 @@ PKGS=(
 
 dnf5 install -y "${PKGS[@]}"
 
-log "INFO" "Layer 4: Complete"
+log "INFO" "Multimedia & Editors: Complete"

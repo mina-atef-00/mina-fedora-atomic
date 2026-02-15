@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -oue pipefail
 
-SCRIPTS_DIR="/ctx/files/scripts"
-source "${SCRIPTS_DIR}/lib.sh"
+source "/ctx/files/scripts/lib.sh"
 
-log "INFO" "Layer 3: Core Desktop, Filesystems, and Networking..."
+log "INFO" "Core Desktop, Filesystems, and Networking..."
 
 # Enable RPM Fusion (required for multimedia packages)
 log "INFO" "Enabling RPM Fusion repositories..."
@@ -14,6 +13,7 @@ dnf5 install -y "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-
 # Enable COPR repositories needed for this layer
 log "INFO" "Enabling COPR repositories..."
 dnf5 -y copr enable avengemedia/dms
+dnf5 -y copr enable dejan/rpms
 
 PKGS=(
   # Core Desktop (includes dms, dms-greeter from COPR)
@@ -63,4 +63,4 @@ PKGS=(
 
 dnf5 install -y "${PKGS[@]}"
 
-log "INFO" "Layer 3: Complete"
+log "INFO" "Core Desktop: Complete"

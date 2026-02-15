@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -oue pipefail
 
-SCRIPTS_DIR="/ctx/files/scripts"
-source "${SCRIPTS_DIR}/lib.sh"
+source "/ctx/files/scripts/lib.sh"
 
-log "INFO" "Layer 9: Finalization..."
+log "INFO" "Finalization..."
 
 # Remove unwanted packages
 REMOVE_PKGS=(
@@ -113,6 +112,6 @@ if command -v dracut &>/dev/null; then
   dracut --force --regenerate-all 2>/dev/null || true
 fi
 
-log "INFO" "Layer 9: Complete"
+log "INFO" "Finalization: Complete"
 log "INFO" "Build finished successfully for image: ${IMAGE_NAME}"
 log "INFO" "Profile: ${HOST_PROFILE}"

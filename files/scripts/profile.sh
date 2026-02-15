@@ -1,23 +1,15 @@
 #!/usr/bin/env bash
 set -oue pipefail
 
-SCRIPTS_DIR="/ctx/files/scripts"
-source "${SCRIPTS_DIR}/lib.sh"
+source "/ctx/files/scripts/lib.sh"
 
-log "INFO" "Layer 7: Hardware Profile - ${HOST_PROFILE}..."
+log "INFO" "Hardware Profile - ${HOST_PROFILE}..."
 
 # Install profile-specific drivers and configurations
 if [[ "$HOST_PROFILE" == "asus" ]]; then
   log "INFO" "Configuring ASUS Desktop Profile..."
 
-  # Install NVIDIA kernel modules from akmods
-  if [ -d "/tmp/akmods-nvidia" ]; then
-    log "INFO" "Installing NVIDIA kernel modules..."
-    dnf5 install -y /tmp/akmods-nvidia/ublue-os/ublue-os-nvidia*.rpm
-    dnf5 install -y /tmp/akmods-nvidia/kmods/kmod-nvidia*.rpm
-  fi
-
-  # Install NVIDIA userspace drivers
+  # Install NVIDIA userspace drivers (kernel modules installed in akmods stage)
   dnf5 install -y --enablerepo=fedora-nvidia \
     nvidia-driver \
     nvidia-driver-cuda \
@@ -236,4 +228,4 @@ git config --global commit.gpgsign false
 log "INFO" "Setting system timezone to Africa/Cairo..."
 ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime
 
-log "INFO" "Layer 7: Complete"
+log "INFO" "Hardware Profile: Complete"

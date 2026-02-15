@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -oue pipefail
 
-SCRIPTS_DIR="/ctx/files/scripts"
-source "${SCRIPTS_DIR}/lib.sh"
+source "/ctx/files/scripts/lib.sh"
 
-log "INFO" "Layer 5: CLI Tools and GUI Utilities..."
+log "INFO" "CLI Tools and GUI Utilities..."
 
 # Enable COPR repositories needed for this layer
 log "INFO" "Enabling COPR repositories..."
@@ -67,6 +66,7 @@ fi
 # Store COPR list for later cleanup
 COPR_LIST=(
   "avengemedia/dms"
+  "dejan/rpms"
   "lihaohong/yazi"
   "alternateved/eza"
   "atim/starship"
@@ -75,4 +75,4 @@ COPR_LIST=(
 )
 printf '%s\n' "${COPR_LIST[@]}" > /tmp/copr-list.txt
 
-log "INFO" "Layer 5: Complete"
+log "INFO" "CLI Tools & GUI Utilities: Complete"

@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -oue pipefail
 
-SCRIPTS_DIR="/ctx/files/scripts"
-source "${SCRIPTS_DIR}/lib.sh"
+source "/ctx/files/scripts/lib.sh"
 
-log "INFO" "Layer 1: Base Setup..."
+log "INFO" "Base Setup..."
 
 # Pre-cleanup
 log "INFO" "Performing pre-build cleanup..."
@@ -24,4 +23,4 @@ if [ -d /opt ]; then
   rm -v /opt && mkdir -vp /opt
 fi
 
-log "INFO" "Layer 1: Complete"
+log "INFO" "Base Setup: Complete"

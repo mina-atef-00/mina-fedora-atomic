@@ -66,7 +66,7 @@ curl_fetch() { curl -fsS -X GET --retry 5 "${1}"; }
 
 curl_get() {
   if [[ ! $# -eq 2 ]]; then
-    { err "Specify URL and local file path"; } 2>/dev/null
+    { err "Specify local file path and URL"; } 2>/dev/null
     return 1
   fi
   curl -fLsS --retry 5 "${2}" -o "${1}"

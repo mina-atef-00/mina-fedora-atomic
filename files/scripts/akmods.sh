@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -oue pipefail
 
-SCRIPTS_DIR="/ctx/files/scripts"
-source "${SCRIPTS_DIR}/lib.sh"
+source "/ctx/files/scripts/lib.sh"
 
-log "INFO" "Layer 2: Kernel Modules (Akmods)..."
+log "INFO" "Kernel Modules (Akmods)..."
 
 # Install common akmods (v4l2loopback, ublue-os-addons)
 if [ -d "/tmp/akmods-common" ]; then
@@ -40,4 +39,4 @@ else
   log "INFO" "Profile is not 'asus', skipping NVIDIA kernel modules"
 fi
 
-log "INFO" "Layer 2: Complete"
+log "INFO" "Kernel Modules: Complete"

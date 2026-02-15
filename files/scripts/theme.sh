@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -oue pipefail
 
-SCRIPTS_DIR="/ctx/files/scripts"
-source "${SCRIPTS_DIR}/lib.sh"
+source "/ctx/files/scripts/lib.sh"
 
-log "INFO" "Layer 8: Theming & Fonts..."
+log "INFO" "Theming & Fonts..."
 
 # Install RPM font packages
 log "INFO" "Installing font packages..."
@@ -212,4 +211,4 @@ EOF
 log "INFO" "Cleaning up DNF cache..."
 dnf5 clean all
 
-log "INFO" "Layer 8: Complete"
+log "INFO" "Theming: Complete"
