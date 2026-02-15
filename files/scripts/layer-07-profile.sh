@@ -1,0 +1,239 @@
+#!/usr/bin/env bash
+set -oue pipefail
+
+SCRIPTS_DIR="/ctx/files/scripts"
+source "${SCRIPTS_DIR}/lib.sh"
+
+log "INFO" "Layer 7: Hardware Profile - ${HOST_PROFILE}..."
+
+# Install profile-specific drivers and configurations
+if [[ "$HOST_PROFILE" == "asus" ]]; then
+  log "INFO" "Configuring ASUS Desktop Profile..."
+
+  # Install NVIDIA kernel modules from akmods
+  if [ -d "/tmp/akmods-nvidia" ]; then
+    log "INFO" "Installing NVIDIA kernel modules..."
+    dnf5 install -y /tmp/akmods-nvidia/ublue-os/ublue-os-nvidia*.rpm
+    dnf5 install -y /tmp/akmods-nvidia/kmods/kmod-nvidia*.rpm
+  fi
+
+  # Install NVIDIA userspace drivers
+  dnf5 install -y --enablerepo=fedora-nvidia \
+    nvidia-driver \
+    nvidia-driver-cuda \
+    nvidia-driver-libs \
+    nvidia-modprobe \
+    nvidia-persistenced \
+    nvidia-settings \
+    libnvidia-fbc \
+    libva-nvidia-driver
+
+  # Blacklist nouveau
+  cat > /usr/lib/modprobe.d/00-nouveau-blacklist.conf <<EOF
+blacklist nouveau
+options nouveau modeset=0
+EOF
+
+  # Configure dracut to force load NVIDIA
+  if [ -f "/usr/lib/dracut/dracut.conf.d/99-nvidia.conf" ]; then
+    sed -i 's/omit_drivers/force_drivers/g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
+  fi
+
+  # Move nvidia-modeset config to correct location
+  if [ -f "/etc/modprobe.d/nvidia-modeset.conf" ]; then
+    mv /etc/modprobe.d/nvidia-modeset.conf /usr/lib/modprobe.d/nvidia-modeset.conf
+  fi
+
+  # Desktop hardware tools
+  dnf5 install -y i2c-tools ddcutil
+
+  # Create NVIDIA CDI service
+  cat > /usr/lib/systemd/system/nvctk-cdi.service <<'EOF'
+[Unit]
+Description=nvidia container toolkit CDI auto-generation
+ConditionFileIsExecutable=/usr/bin/nvidia-ctk
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  systemctl enable nvctk-cdi.service
+
+  # Copy profile-specific files
+  if [ -d "/ctx/files/profiles/asus" ]; then
+    cp -r /ctx/files/profiles/asus/* / 2>/dev/null || true
+  fi
+
+elif [[ "$HOST_PROFILE" == "lnvo" ]]; then
+  log "INFO" "Configuring LNVO Laptop Profile..."
+
+  # Install laptop-specific packages
+  dnf5 install -y brightnessctl libva-intel-media-driver
+
+  # Copy profile-specific files
+  if [ -d "/ctx/files/profiles/lnvo" ]; then
+    cp -r /ctx/files/profiles/lnvo/* / 2>/dev/null || true
+  fi
+fi
+
+# Apply common system files (always run after profile-specific)
+if [ -d "/ctx/files/system" ]; then
+  log "INFO" "Applying common system configuration..."
+  
+  # Safety check: Prevent stateful directory pollution
+  FORBIDDEN_PATHS=("var" "home" "root" "run")
+  for path in "${FORBIDDEN_PATHS[@]}"; do
+    if [ -d "/ctx/files/system/${path}" ]; then
+      die "CRITICAL ERROR: Overlay contains '/${path}'. In Bootc images, this directory is for runtime state only."
+    fi
+  done
+  
+  cp -r /ctx/files/system/* / 2>/dev/null || true
+fi
+
+# --- SYSTEMD SERVICE MANAGEMENT ---
+log "INFO" "Configuring systemd services..."
+
+# Services to be explicitly enabled
+ENABLED_SERVICES=(
+  "force-unblock-radios.service"
+  "greetd.service"
+  "bluetooth.service"
+  "power-profiles-daemon.service"
+  "systemd-timesyncd.service"
+  "systemd-resolved.service"
+  "firewalld.service"
+)
+
+# Global services to be explicitly enabled
+ENABLED_GLOBAL_SERVICES=(
+  "gnome-keyring-daemon.service"
+  "gnome-keyring-daemon.socket"
+)
+
+# Presets to be explicitly enabled
+ENABLED_PRESETS=(
+  "chezmoi-init"
+  "chezmoi-update"
+  "udiskie"
+)
+
+# Services to be explicitly disabled AND masked
+DISABLED_SERVICES=(
+  "NetworkManager-wait-online.service"
+  "flatpak-add-fedora-repos.service"
+  "bootc-fetch-apply-updates.timer"
+)
+
+# Enable services
+log "INFO" "Enabling services..."
+for service in "${ENABLED_SERVICES[@]}"; do
+  log "INFO" "  [+] Enabling: $service"
+  systemctl enable "$service" || log "WARN" "Failed to enable $service"
+done
+
+# Enable global services
+log "INFO" "Enabling global services..."
+for service in "${ENABLED_GLOBAL_SERVICES[@]}"; do
+  log "INFO" "  [+] Enabling: $service"
+  systemctl enable --global "$service" || log "WARN" "Failed to enable $service globally"
+done
+
+# Apply presets
+log "INFO" "Applying presets..."
+for preset in "${ENABLED_PRESETS[@]}"; do
+  log "INFO" "  [+] Preset: $preset"
+  systemctl preset --global "$preset" || log "WARN" "Failed to apply preset $preset"
+done
+
+# Disable and mask services
+log "INFO" "Disabling and masking services..."
+for service in "${DISABLED_SERVICES[@]}"; do
+  log "INFO" "  [-] Disabling/Masking: $service"
+  systemctl disable "$service" 2>/dev/null || true
+  systemctl mask "$service" 2>/dev/null || true
+done
+
+# --- SYSTEM FILE PERMISSIONS ---
+log "INFO" "Setting system file permissions..."
+
+# Enforce root ownership on system paths
+SYSTEM_PATHS=(
+  "/etc/ssh"
+  "/etc/greetd"
+  "/etc/environment.d"
+  "/usr/lib/bootc"
+  "/usr/lib/sysusers.d"
+  "/usr/lib/udev/rules.d"
+  "/usr/share/polkit-1/rules.d"
+  "/usr/lib/pam.d"
+)
+
+for path in "${SYSTEM_PATHS[@]}"; do
+  if [ -d "$path" ]; then
+    chown -R root:root "$path"
+  fi
+done
+
+# SSH Security
+if [ -d "/etc/ssh/sshd_config.d" ]; then
+  chmod 700 /etc/ssh/sshd_config.d
+  find /etc/ssh/sshd_config.d -type f -name "*.conf" -exec chmod 600 {} +
+fi
+
+# Greetd / PAM
+if [ -d "/etc/greetd" ]; then
+  chmod 755 /etc/greetd
+  [ -f "/etc/greetd/config.toml" ] && chmod 644 /etc/greetd/config.toml
+fi
+
+if [ -f "/usr/lib/pam.d/greetd-spawn" ]; then
+  chmod 644 /usr/lib/pam.d/greetd-spawn
+fi
+
+# Polkit & Udev
+[ -d "/usr/share/polkit-1/rules.d" ] && find /usr/share/polkit-1/rules.d -type f -exec chmod 644 {} +
+[ -d "/usr/lib/udev/rules.d" ] && find /usr/lib/udev/rules.d -type f -exec chmod 644 {} +
+
+# Environment
+[ -d "/etc/environment.d" ] && find /etc/environment.d -type f -exec chmod 644 {} +
+
+# --- BLUETOOTH CONFIGURATION ---
+if [ -f "/etc/bluetooth/main.conf" ]; then
+  log "INFO" "Configuring Bluetooth AutoEnable..."
+  cat <<EOF >>/etc/bluetooth/main.conf
+
+[Policy]
+AutoEnable=true
+EOF
+fi
+
+# --- LAPTOP POWER CONFIGURATION ---
+if [[ "$HOST_PROFILE" == "lnvo" ]]; then
+  log "INFO" "Configuring laptop power management..."
+  mkdir -p /etc/systemd/logind.conf.d
+  cat > /etc/systemd/logind.conf.d/10-mina-power.conf <<EOF
+[Login]
+HandleLidSwitch=suspend
+HandleLidSwitchExternalPower=ignore
+HandleLidSwitchDocked=ignore
+HandlePowerKey=poweroff
+HandleSuspendKey=suspend
+HandleRebootKey=reboot
+EOF
+  chmod 644 /etc/systemd/logind.conf.d/10-mina-power.conf
+fi
+
+# --- GIT CONFIGURATION ---
+git config --global commit.gpgsign false
+
+# --- TIMEZONE SETUP ---
+log "INFO" "Setting system timezone to Africa/Cairo..."
+ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime
+
+log "INFO" "Layer 7: Complete"
