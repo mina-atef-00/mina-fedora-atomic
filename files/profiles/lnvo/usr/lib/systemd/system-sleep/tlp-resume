@@ -1,0 +1,14 @@
+#!/bin/bash
+# Sleep hook for laptop profile
+# Optimizes system state during sleep/wake
+
+case "$1" in
+  pre)
+    # Before sleep
+    /usr/sbin/tlp true >/dev/null 2>&1 || true
+    ;;
+  post)
+    # After wake
+    /usr/sbin/tlp start >/dev/null 2>&1 || true
+    ;;
+esac
