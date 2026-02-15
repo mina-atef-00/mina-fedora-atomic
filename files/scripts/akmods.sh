@@ -20,8 +20,10 @@ else
   log "WARN" "Common akmods directory not found at /tmp/akmods-common"
 fi
 
-# Install NVIDIA kernel modules for ASUS profile
+# Install NVIDIA kernel modules and userspace drivers for ASUS profile
 if [[ "$HOST_PROFILE" == "asus" ]]; then
+  log "INFO" "Installing NVIDIA drivers..."
+  
   if [ -d "/tmp/akmods-nvidia" ]; then
     log "INFO" "Installing NVIDIA kernel modules..."
     
@@ -35,8 +37,19 @@ if [[ "$HOST_PROFILE" == "asus" ]]; then
   else
     log "WARN" "NVIDIA akmods directory not found at /tmp/akmods-nvidia"
   fi
+
+  # Install NVIDIA userspace drivers
+  dnf5 install -y --enablerepo=fedora-nvidia \
+    nvidia-driver \
+    nvidia-driver-cuda \
+    nvidia-driver-libs \
+    nvidia-modprobe \
+    nvidia-persistenced \
+    nvidia-settings \
+    libnvidia-fbc \
+    libva-nvidia-driver
 else
-  log "INFO" "Profile is not 'asus', skipping NVIDIA kernel modules"
+  log "INFO" "Profile is not 'asus', skipping NVIDIA drivers"
 fi
 
 log "INFO" "Kernel Modules: Complete"

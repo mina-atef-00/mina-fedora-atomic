@@ -9,17 +9,6 @@ log "INFO" "Hardware Profile - ${HOST_PROFILE}..."
 if [[ "$HOST_PROFILE" == "asus" ]]; then
   log "INFO" "Configuring ASUS Desktop Profile..."
 
-  # Install NVIDIA userspace drivers (kernel modules installed in akmods stage)
-  dnf5 install -y --enablerepo=fedora-nvidia \
-    nvidia-driver \
-    nvidia-driver-cuda \
-    nvidia-driver-libs \
-    nvidia-modprobe \
-    nvidia-persistenced \
-    nvidia-settings \
-    libnvidia-fbc \
-    libva-nvidia-driver
-
   # Blacklist nouveau
   cat > /usr/lib/modprobe.d/00-nouveau-blacklist.conf <<EOF
 blacklist nouveau
