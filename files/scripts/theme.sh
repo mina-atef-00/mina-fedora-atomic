@@ -10,8 +10,8 @@ log "INFO" "Installing font packages..."
 FONT_PKGS=(
   # System fonts
   "google-noto-sans-vf-fonts"
-  "google-noto-serif-vf-fonts" 
-  "google-noto-mono-vf-fonts"
+  "google-noto-serif-vf-fonts"
+  "google-noto-sans-mono-vf-fonts"
   "google-noto-emoji-color-fonts"
   "jetbrains-mono-fonts"
   "fira-code-fonts"

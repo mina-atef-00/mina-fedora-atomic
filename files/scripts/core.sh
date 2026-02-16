@@ -5,14 +5,7 @@ source "/ctx/files/scripts/lib.sh"
 
 section "STAGE 3: Core Desktop + Filesystems + Networking"
 
-# Enable RPM Fusion (required for multimedia packages)
-log "INFO" "Enabling RPM Fusion repositories..."
-if ! rpm -q rpmfusion-free-release &>/dev/null; then
-  dnf5 install -y "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" --quiet 2>&1 | tail -5
-fi
-if ! rpm -q rpmfusion-nonfree-release &>/dev/null; then
-  dnf5 install -y "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" --quiet 2>&1 | tail -5
-fi
+# Note: RPM Fusion already enabled in akmods stage for NVIDIA support
 
 # Enable COPR repositories needed for this layer
 log "INFO" "Enabling COPR repositories..."
