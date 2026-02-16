@@ -26,7 +26,7 @@ EOF
   fi
 
   # Desktop hardware tools
-  dnf5 install -y i2c-tools ddcutil
+  dnf_install_quiet i2c-tools ddcutil
 
   # Create NVIDIA CDI service
   cat > /usr/lib/systemd/system/nvctk-cdi.service <<'EOF'
@@ -54,7 +54,7 @@ elif [[ "$HOST_PROFILE" == "lnvo" ]]; then
   log "INFO" "Configuring LNVO Laptop Profile..."
 
   # Install laptop-specific packages (libva-intel-media-driver already installed in akmods stage)
-  dnf5 install -y brightnessctl
+  dnf_install_quiet brightnessctl
 
   # Copy profile-specific files
   if [ -d "/ctx/files/profiles/lnvo" ]; then

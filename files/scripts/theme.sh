@@ -26,7 +26,7 @@ FONT_PKGS=(
   "google-noto-sans-cjk-vf-fonts"
 )
 
-dnf5 install -y "${FONT_PKGS[@]}"
+dnf_install_quiet "${FONT_PKGS[@]}"
 
 # Install external fonts (Nerd Fonts, etc.)
 log "INFO" "Installing external fonts..."
