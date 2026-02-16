@@ -39,6 +39,18 @@ if [[ "$HOST_PROFILE" == "asus" ]]; then
     if [ -d "/tmp/akmods-nvidia/kmods" ]; then
       dnf5 install -y /tmp/akmods-nvidia/kmods/kmod-nvidia*.rpm
     fi
+    
+    # Verify NVIDIA modules are installed for the current kernel
+    KERNEL_VERSION=$(uname -r)
+    if [ ! -d "/usr/lib/modules/${KERNEL_VERSION}/kernel/drivers/video" ] || \
+       [ ! -f "/usr/lib/modules/${KERNEL_VERSION}/kernel/drivers/video/nvidia.ko" ] && \
+       [ ! -f "/usr/lib/modules/${KERNEL_VERSION}/kernel/drivers/video/nvidia.ko.xz" ]; then
+      log "WARN" "NVIDIA kernel modules not found for kernel ${KERNEL_VERSION}"
+      log "WARN" "Akmods may have been built for a different kernel version"
+      log "WARN" "NVIDIA support may not work on first boot - modules will be built by akmods-dkms on boot"
+    else
+      log "INFO" "NVIDIA kernel modules verified for kernel ${KERNEL_VERSION}"
+    fi
   else
     log "WARN" "NVIDIA akmods directory not found at /tmp/akmods-nvidia"
   fi

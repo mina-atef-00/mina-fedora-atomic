@@ -24,6 +24,8 @@ RUN --mount=type=cache,dst=/var/cache \
 # ============================================================================
 # STAGE 2: KERNEL MODULES (Akmods)
 # Common + NVIDIA (conditional on profile)
+# NOTE: These tags must match the kernel version in base-main:43
+# Check https://github.com/ublue-os/akmods/pkgs/container/akmods for available tags
 # ============================================================================
 FROM ghcr.io/ublue-os/akmods:main-43 AS akmods-common
 FROM ghcr.io/ublue-os/akmods-nvidia-open:main-43 AS akmods-nvidia
