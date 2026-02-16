@@ -5,6 +5,11 @@ source "/ctx/files/scripts/lib.sh"
 
 log "INFO" "Kernel Modules (Akmods)..."
 
+# Enable RPM Fusion (required for akmods and multimedia packages on all hosts)
+log "INFO" "Enabling RPM Fusion repositories..."
+dnf5 install -y "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" --quiet 2>&1 | tail -5 || true
+dnf5 install -y "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" --quiet 2>&1 | tail -5 || true
+
 # Debug info
 log "INFO" "Kernel version: $(uname -r)"
 log "INFO" "Checking /tmp/akmods-nvidia contents..."
@@ -30,11 +35,6 @@ fi
 # Install NVIDIA kernel modules and userspace drivers for ASUS profile
 if [[ "$HOST_PROFILE" == "asus" ]]; then
   log "INFO" "Installing NVIDIA drivers..."
-  
-  # Enable RPM Fusion first (required for NVIDIA userspace drivers)
-  log "INFO" "Enabling RPM Fusion repositories..."
-  dnf5 install -y "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" --quiet 2>&1 | tail -5 || true
-  dnf5 install -y "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" --quiet 2>&1 | tail -5 || true
   
   if [ -d "/tmp/akmods-nvidia" ]; then
     log "INFO" "Installing NVIDIA kernel modules..."
