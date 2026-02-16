@@ -19,6 +19,8 @@ if [ -d "/tmp/akmods-common" ]; then
   fi
   
   if [ -d "/tmp/akmods-common/kmods" ]; then
+    # Install v4l2loopback userspace package first (required dependency)
+    dnf5 install -y v4l2loopback || true
     dnf5 install -y /tmp/akmods-common/kmods/kmod-v4l2loopback*.rpm || true
   fi
 else
