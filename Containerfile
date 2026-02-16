@@ -39,7 +39,6 @@ ARG HOST_PROFILE
 ENV HOST_PROFILE="${HOST_PROFILE}"
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
-    --mount=type=tmpfs,dst=/tmp \
     /ctx/files/scripts/akmods.sh
 
 # ============================================================================
