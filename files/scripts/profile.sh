@@ -53,8 +53,8 @@ EOF
 elif [[ "$HOST_PROFILE" == "lnvo" ]]; then
   log "INFO" "Configuring LNVO Laptop Profile..."
 
-  # Install laptop-specific packages
-  dnf5 install -y brightnessctl libva-intel-media-driver
+  # Install laptop-specific packages (libva-intel-media-driver already installed in akmods stage)
+  dnf5 install -y brightnessctl
 
   # Copy profile-specific files
   if [ -d "/ctx/files/profiles/lnvo" ]; then
@@ -123,10 +123,14 @@ for service in "${ENABLED_GLOBAL_SERVICES[@]}"; do
   systemctl enable --global "$service" &>/dev/null && log "INFO" "  [+] $service" || die "CRITICAL: Failed to enable $service globally"
 done
 
-# Apply presets
+# Apply presets (non-critical, just log warnings if they fail)
 log "INFO" "Applying presets..."
 for preset in "${ENABLED_PRESETS[@]}"; do
-  systemctl preset --global "$preset" &>/dev/null && log "INFO" "  [+] $preset" || die "CRITICAL: Failed to apply preset $preset"
+  if systemctl preset --global "$preset" &>/dev/null; then
+    log "INFO" "  [+] $preset"
+  else
+    log "WARN" "  [!] Preset '$preset' not found (skipping)"
+  fi
 done
 
 # Disable and mask services
