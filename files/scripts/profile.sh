@@ -60,6 +60,8 @@ elif [[ "$HOST_PROFILE" == "lnvo" ]]; then
   if [ -d "/ctx/files/profiles/lnvo" ]; then
     cp -r /ctx/files/profiles/lnvo/* / 2>/dev/null || true
   fi
+else
+  die "Unknown HOST_PROFILE: '$HOST_PROFILE'. Valid profiles: asus, lnvo"
 fi
 
 # Apply common system files (always run after profile-specific)
@@ -99,8 +101,6 @@ ENABLED_GLOBAL_SERVICES=(
 
 # Presets to be explicitly enabled
 ENABLED_PRESETS=(
-  "chezmoi-init"
-  "chezmoi-update"
   "udiskie"
 )
 
@@ -115,21 +115,21 @@ DISABLED_SERVICES=(
 log "INFO" "Enabling services..."
 for service in "${ENABLED_SERVICES[@]}"; do
   log "INFO" "  [+] Enabling: $service"
-  systemctl enable "$service" || log "WARN" "Failed to enable $service"
+  systemctl enable "$service" || die "CRITICAL: Failed to enable $service - build aborted"
 done
 
 # Enable global services
 log "INFO" "Enabling global services..."
 for service in "${ENABLED_GLOBAL_SERVICES[@]}"; do
   log "INFO" "  [+] Enabling: $service"
-  systemctl enable --global "$service" || log "WARN" "Failed to enable $service globally"
+  systemctl enable --global "$service" || die "CRITICAL: Failed to enable $service globally - build aborted"
 done
 
 # Apply presets
 log "INFO" "Applying presets..."
 for preset in "${ENABLED_PRESETS[@]}"; do
   log "INFO" "  [+] Preset: $preset"
-  systemctl preset --global "$preset" || log "WARN" "Failed to apply preset $preset"
+  systemctl preset --global "$preset" || die "CRITICAL: Failed to apply preset $preset - build aborted"
 done
 
 # Disable and mask services
@@ -209,12 +209,5 @@ HandleRebootKey=reboot
 EOF
   chmod 644 /etc/systemd/logind.conf.d/10-mina-power.conf
 fi
-
-# --- GIT CONFIGURATION ---
-git config --global commit.gpgsign false
-
-# --- TIMEZONE SETUP ---
-log "INFO" "Setting system timezone to Africa/Cairo..."
-ln -sf /usr/share/zoneinfo/Africa/Cairo /etc/localtime
 
 log "INFO" "Hardware Profile: Complete"

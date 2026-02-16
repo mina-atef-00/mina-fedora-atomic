@@ -7,8 +7,12 @@ log "INFO" "Core Desktop, Filesystems, and Networking..."
 
 # Enable RPM Fusion (required for multimedia packages)
 log "INFO" "Enabling RPM Fusion repositories..."
-dnf5 install -y "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
-dnf5 install -y "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+if ! rpm -q rpmfusion-free-release &>/dev/null; then
+  dnf5 install -y "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
+fi
+if ! rpm -q rpmfusion-nonfree-release &>/dev/null; then
+  dnf5 install -y "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+fi
 
 # Enable COPR repositories needed for this layer
 log "INFO" "Enabling COPR repositories..."

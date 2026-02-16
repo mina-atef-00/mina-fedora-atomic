@@ -109,7 +109,7 @@ chmod 755 /usr/lib/systemd/system/*.service 2>/dev/null || true
 # Rebuild initramfs for any kernel modules
 if command -v dracut &>/dev/null; then
   log "INFO" "Rebuilding initramfs..."
-  dracut --force --regenerate-all 2>/dev/null || true
+  dracut --force --regenerate-all || die "Initramfs generation failed - build aborted"
 fi
 
 log "INFO" "Finalization: Complete"

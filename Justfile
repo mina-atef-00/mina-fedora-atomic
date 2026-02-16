@@ -1,4 +1,4 @@
-export image_name := env("IMAGE_NAME", "image-template") # output image name, usually same as repo name, change as needed
+export image_name := env("IMAGE_NAME", "image-template")
 export default_tag := env("DEFAULT_TAG", "latest")
 export bib_image := env("BIB_IMAGE", "quay.io/centos-bootc/bootc-image-builder:latest")
 
@@ -38,11 +38,11 @@ clean:
     #!/usr/bin/env bash
     set -eoux pipefail
     touch _build
-    find *_build* -exec rm -rf {} \;
+    find . -maxdepth 1 -type d -name "_build*" -exec rm -rf {} +
     rm -f previous.manifest.json
     rm -f changelog.md
     rm -f output.env
-    rm -f output/
+    rm -rf output/
 
 # Sudo Clean Repo
 [group('Utility')]
@@ -60,6 +60,7 @@ sudoif command *args:
     else
         sudo {{ command }} {{ args }}
     fi
+
 # This Justfile recipe builds a container image using Podman.
 #
 # Arguments:
@@ -76,8 +77,8 @@ sudoif command *args:
 #
 # This will build an image 'aurora:lts' with DX and GDX enabled.
 #
-
 # Build the image using the specified parameters
+
 # Usage: just build <image_name> <profile> <tag>
 build target_image profile tag="latest":
     #!/usr/bin/env bash
@@ -86,14 +87,9 @@ build target_image profile tag="latest":
     BUILD_ARGS=()
     BUILD_ARGS+=("--build-arg" "HOST_PROFILE={{ profile }}")
     BUILD_ARGS+=("--build-arg" "IMAGE_NAME={{ target_image }}")
-    
-    if [[ -z "$(git status -s)" ]]; then
-        SHA=$(git rev-parse --short HEAD)
-        BUILD_ARGS+=("--build-arg" "SHA_HEAD_SHORT=$SHA")
-    fi
 
     echo "🏗️ Building localhost/{{ target_image }} for profile: {{ profile }}..."
-    
+
     # We explicitly add localhost/ to the tag
     podman build \
         "${BUILD_ARGS[@]}" \
@@ -138,7 +134,7 @@ _rootful_load_image target_image tag:
 
     # Use quiet mode (-q) to get ID only, head -n 1 to handle duplicates
     USER_IMG_ID=$(podman images -q "$FULL_NAME" | head -n 1)
-    
+
     # Check Root storage
     ROOT_IMG_ID=$(just sudoif podman images -q "$FULL_NAME" | head -n 1) || true
 
@@ -169,6 +165,7 @@ _build-bib $target_image $tag $type $config: (_rootful_load_image target_image t
     args+="--rootfs=btrfs"
 
     BUILDTMP=$(mktemp -p "${PWD}" -d -t _build-bib.XXXXXXXXXX)
+    trap 'rm -rf "$BUILDTMP"' EXIT
 
     sudo podman run \
       --rm \
@@ -207,16 +204,16 @@ build-qcow2 $target_image=("localhost/" + image_name) $tag=default_tag: && (_bui
 [group('Build Virtal Machine Image')]
 build-raw $target_image=("localhost/" + image_name) $tag=default_tag: && (_build-bib target_image tag "raw" "disk_config/disk.toml")
 
-
 # --- ISO BUILDERS ---
 
 # Build BOTH ISOs (Desktop & Laptop) sequentially
 [group('Distribution')]
 iso-all source="ghcr":
-    just iso asus {{source}}
-    just iso lnvo {{source}}
+    just iso asus {{ source }}
+    just iso lnvo {{ source }}
 
 # Master ISO command: just iso <profile> <source>
+
 # Example: just iso asus local
 [group('Distribution')]
 iso profile source="ghcr":
@@ -340,7 +337,6 @@ spawn-vm rebuild="0" type="qcow2" ram="6G":
       --network-user-mode \
       --vsock=false --pass-ssh-key=false \
       -i ./output/**/*.{{ type }}
-
 
 # Runs shell check on all Bash scripts
 lint:

@@ -36,6 +36,7 @@ PKGS=(
   "wev"
   "age"
   "wlr-randr"
+  "ShellCheck"
 
   # GUI Utilities
   "kitty"
