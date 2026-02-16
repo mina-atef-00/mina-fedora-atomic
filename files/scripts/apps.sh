@@ -3,15 +3,15 @@ set -oue pipefail
 
 source "/ctx/files/scripts/lib.sh"
 
-log "INFO" "CLI Tools and GUI Utilities..."
+section "STAGE 5: CLI Tools + GUI Utilities"
 
 # Enable COPR repositories needed for this layer
 log "INFO" "Enabling COPR repositories..."
-dnf5 -y copr enable lihaohong/yazi
-dnf5 -y copr enable alternateved/eza
-dnf5 -y copr enable atim/starship
-dnf5 -y copr enable lilay/topgrade
-dnf5 -y copr enable atim/bottom
+copr_enable_quiet lihaohong/yazi
+copr_enable_quiet alternateved/eza
+copr_enable_quiet atim/starship
+copr_enable_quiet lilay/topgrade
+copr_enable_quiet atim/bottom
 
 PKGS=(
   # CLI Tools
@@ -57,7 +57,7 @@ PKGS=(
   "mpv"
 )
 
-dnf5 install -y "${PKGS[@]}"
+dnf_install_quiet "${PKGS[@]}"
 
 # Set default shell to Fish
 if [ -f /etc/default/useradd ]; then

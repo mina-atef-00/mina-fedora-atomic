@@ -114,30 +114,26 @@ DISABLED_SERVICES=(
 # Enable services
 log "INFO" "Enabling services..."
 for service in "${ENABLED_SERVICES[@]}"; do
-  log "INFO" "  [+] Enabling: $service"
-  systemctl enable "$service" || die "CRITICAL: Failed to enable $service - build aborted"
+  systemctl enable "$service" &>/dev/null && log "INFO" "  [+] $service" || die "CRITICAL: Failed to enable $service"
 done
 
 # Enable global services
 log "INFO" "Enabling global services..."
 for service in "${ENABLED_GLOBAL_SERVICES[@]}"; do
-  log "INFO" "  [+] Enabling: $service"
-  systemctl enable --global "$service" || die "CRITICAL: Failed to enable $service globally - build aborted"
+  systemctl enable --global "$service" &>/dev/null && log "INFO" "  [+] $service" || die "CRITICAL: Failed to enable $service globally"
 done
 
 # Apply presets
 log "INFO" "Applying presets..."
 for preset in "${ENABLED_PRESETS[@]}"; do
-  log "INFO" "  [+] Preset: $preset"
-  systemctl preset --global "$preset" || die "CRITICAL: Failed to apply preset $preset - build aborted"
+  systemctl preset --global "$preset" &>/dev/null && log "INFO" "  [+] $preset" || die "CRITICAL: Failed to apply preset $preset"
 done
 
 # Disable and mask services
 log "INFO" "Disabling and masking services..."
 for service in "${DISABLED_SERVICES[@]}"; do
-  log "INFO" "  [-] Disabling/Masking: $service"
-  systemctl disable "$service" 2>/dev/null || true
-  systemctl mask "$service" 2>/dev/null || true
+  systemctl disable "$service" &>/dev/null
+  systemctl mask "$service" &>/dev/null && log "INFO" "  [-] $service"
 done
 
 # --- SYSTEM FILE PERMISSIONS ---

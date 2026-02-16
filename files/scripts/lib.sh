@@ -10,7 +10,7 @@ declare -r noc=$'\033[0m'
 
 # Default Verbosity
 QUIET=false
-VERBOSE=2
+VERBOSE=1  # Reduced from 2 to suppress DEBUG logs
 
 # Logging function
 log() {
@@ -49,6 +49,24 @@ log() {
 
   # Print to stderr to avoid polluting pipe outputs, or stdout if preferred
   echo -e "${bold}${datetime}${color}[${level^^}]${noc} ${msg}"
+}
+
+# Visual section header
+section() {
+  echo ""
+  echo "═══════════════════════════════════════════════════════════════"
+  echo "  $1"
+  echo "═══════════════════════════════════════════════════════════════"
+}
+
+# Quiet DNF install - suppresses progress spam but keeps errors
+dnf_install_quiet() {
+  dnf5 install -y "$@" --quiet 2>&1 | grep -v "^\[\|Installing:\|Installing dependencies:\|Transaction Summary:\|^Total size\|^After this operation\|^Running transaction\|^Complete!\|Verify package\|Prepare transaction" || true
+}
+
+# Quiet COPR enable - suppresses warning spam
+copr_enable_quiet() {
+  dnf5 -y copr enable "$1" 2>&1 | grep -v "Please note\|quality may vary\|Fedora Project\|Bugzilla\|documentation.html\|owner of this repository\|Be aware that\|content. Please review\|These repositories are being" || true
 }
 
 # Error handler

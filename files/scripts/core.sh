@@ -3,21 +3,21 @@ set -oue pipefail
 
 source "/ctx/files/scripts/lib.sh"
 
-log "INFO" "Core Desktop, Filesystems, and Networking..."
+section "STAGE 3: Core Desktop + Filesystems + Networking"
 
 # Enable RPM Fusion (required for multimedia packages)
 log "INFO" "Enabling RPM Fusion repositories..."
 if ! rpm -q rpmfusion-free-release &>/dev/null; then
-  dnf5 install -y "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
+  dnf5 install -y "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" --quiet 2>&1 | tail -5
 fi
 if ! rpm -q rpmfusion-nonfree-release &>/dev/null; then
-  dnf5 install -y "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+  dnf5 install -y "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" --quiet 2>&1 | tail -5
 fi
 
 # Enable COPR repositories needed for this layer
 log "INFO" "Enabling COPR repositories..."
-dnf5 -y copr enable avengemedia/dms
-dnf5 -y copr enable dejan/rpms
+copr_enable_quiet avengemedia/dms
+copr_enable_quiet dejan/rpms
 
 PKGS=(
   # Core Desktop (includes dms, dms-greeter from COPR)
@@ -65,6 +65,6 @@ PKGS=(
   "firewall-config"
 )
 
-dnf5 install -y "${PKGS[@]}"
+dnf_install_quiet "${PKGS[@]}"
 
 log "INFO" "Core Desktop: Complete"
