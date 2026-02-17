@@ -103,8 +103,9 @@ chmod 1777 /var/tmp
 rm -rf /tmp/*
 rm -f /tmp/copr-list.txt
 
-# Ensure proper permissions
-chmod 755 /usr/lib/systemd/system/*.service 2>/dev/null || true
+# Fix systemd service permissions BEFORE dracut to avoid warnings
+log "INFO" "Fixing systemd service permissions..."
+find /usr/lib/systemd/system -type f -name "*.service" -exec chmod 644 {} + 2>/dev/null || true
 
 # Rebuild initramfs for any kernel modules
 if command -v dracut &>/dev/null; then

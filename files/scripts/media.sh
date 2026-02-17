@@ -23,6 +23,6 @@ PKGS=(
   "gh"
 )
 
-dnf5 install -y "${PKGS[@]}"
+dnf_install_quiet "${PKGS[@]}"
 
 log "INFO" "Multimedia & Editors: Complete"
