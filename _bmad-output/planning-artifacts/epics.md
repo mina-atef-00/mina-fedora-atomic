@@ -1,5 +1,5 @@
 ---
-stepsCompleted: ['step-01-validate-prerequisites']
+stepsCompleted: ['step-01-validate-prerequisites', 'step-02-design-epics']
 inputDocuments:
   - _bmad-output/planning-artifacts/gum-logging-prd.md
   - _bmad-output/planning-artifacts/architecture.md
@@ -59,4 +59,35 @@ NFR-003: Maintainability requirements - Single source of truth (lib.sh), Clear f
 
 ## Epic List
 
-(To be designed in step 2)
+## Epic List
+
+### Epic 1: Epic Logging
+Enable developers, DevOps engineers, and system administrators to have clear, beautiful, and informative build logs that make troubleshooting and monitoring bootc image builds efficient and pleasant.
+
+**FRs covered:** FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007, FR-008, FR-009, FR-010
+**NFRs covered:** NFR-001, NFR-002, NFR-003
+
+### FR Coverage Map
+
+| FR | Description |
+|----|-------------|
+| FR-001 | Epic 1 - Log levels (debug, info, warn, error) |
+| FR-002 | Epic 1 - Color palette for dark terminals |
+| FR-003 | Epic 1 - Emoji indicators |
+| FR-004 | Epic 1 - Header block with build info |
+| FR-005 | Epic 1 - 8-phase structure |
+| FR-006 | Epic 1 - Footer block with summary |
+| FR-007 | Epic 1 - Hierarchical logging (3 levels) |
+| FR-008 | Epic 1 - DNF5 output filtering |
+| FR-009 | Epic 1 - Warning suppression |
+| FR-010 | Epic 1 - Error display with fixes |
+
+<!-- Epic 1 Section -->
+
+## Epic 1: Epic Logging
+
+Enable developers, DevOps engineers, and system administrators to have clear, beautiful, and informative build logs that make troubleshooting and monitoring bootc image builds efficient and pleasant.
+
+### Stories
+
+(To be created in step 3)
