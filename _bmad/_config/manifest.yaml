@@ -1,35 +1,36 @@
 installation:
-  version: 6.0.0-Beta.7
+  version: 6.0.1
   installDate: 2026-02-07T20:14:01.336Z
-  lastUpdated: 2026-02-07T20:14:01.336Z
+  lastUpdated: 2026-02-19T17:16:35.739Z
 modules:
   - name: core
-    version: 6.0.0-Beta.7
+    version: 6.0.1
     installDate: 2026-02-07T20:13:59.935Z
-    lastUpdated: 2026-02-07T20:13:59.935Z
+    lastUpdated: 2026-02-19T17:16:23.764Z
     source: built-in
     npmPackage: null
     repoUrl: null
   - name: bmm
-    version: 6.0.0-Beta.7
+    version: 6.0.1
     installDate: 2026-02-07T20:13:56.126Z
-    lastUpdated: 2026-02-07T20:13:59.935Z
+    lastUpdated: 2026-02-19T17:16:23.764Z
     source: built-in
     npmPackage: null
     repoUrl: null
   - name: bmb
-    version: 0.1.5
+    version: 0.1.6
     installDate: 2026-02-07T20:13:57.904Z
-    lastUpdated: 2026-02-07T20:14:00.720Z
+    lastUpdated: 2026-02-19T17:16:29.757Z
     source: external
     npmPackage: bmad-builder
     repoUrl: https://github.com/bmad-code-org/bmad-builder
   - name: cis
-    version: 0.1.4
+    version: 0.1.6
     installDate: 2026-02-07T20:13:59.913Z
-    lastUpdated: 2026-02-07T20:14:01.336Z
+    lastUpdated: 2026-02-19T17:16:35.739Z
     source: external
     npmPackage: bmad-creative-intelligence-suite
     repoUrl: https://github.com/bmad-code-org/bmad-module-creative-intelligence-suite
 ides:
   - opencode
+  - gemini
