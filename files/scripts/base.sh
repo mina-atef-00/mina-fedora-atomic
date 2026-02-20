@@ -5,37 +5,35 @@ source "/ctx/files/scripts/lib.sh"
 
 log_init
 
-echo "==========================================" >&2
-echo " MINA FEDORA ATOMIC BUILD" >&2
-echo " Profile: ${HOST_PROFILE:-default}" >&2
-echo " Image: ${IMAGE_NAME:-mina-fedora-atomic}" >&2
-echo "==========================================" >&2
+echo ""
+echo "=========================================="
+echo " MINA FEDORA ATOMIC BUILD"
+echo " Profile: ${HOST_PROFILE:-default}"
+echo " Image: ${IMAGE_NAME:-mina-fedora-atomic}"
+echo "=========================================="
+echo ""
 
 install_gum() {
-    echo ">>> Installing gum for enhanced logging..." >&2
+    echo ">>> Installing gum for enhanced logging..."
     if dnf5 install -y gum; then
-        echo ">>> Gum installed successfully!" >&2
+        echo ">>> Gum installed successfully!"
         return 0
     else
-        echo ">>> Gum installation failed, using fallback mode" >&2
+        echo ">>> Gum installation failed, using fallback mode"
         export GUM_NO_EMOJI=1
         return 1
     fi
 }
 
 if command -v gum &>/dev/null; then
-    echo ">>> Gum already installed" >&2
+    echo ">>> Gum already installed"
 else
     install_gum || true
 fi
 
-echo "" >&2
-echo ">>> Checking gum availability..." >&2
-if command -v gum &>/dev/null; then
-    echo ">>> Gum is AVAILABLE: $(which gum)" >&2
-else
-    echo ">>> Gum NOT available, using echo fallback" >&2
-fi
+echo ""
+echo ">>> Gum availability: $(command -v gum && echo 'AVAILABLE' || echo 'NOT AVAILABLE')"
+echo ""
 
 print_header \
     "${IMAGE_NAME:-mina-fedora-atomic}" \

@@ -114,8 +114,6 @@ jobs:
             BASE_IMAGE=${{ matrix.base_image }}
             IMAGE_NAME=${{ matrix.image_name }}
           oci: false
-          extra-args: |
-            --quiet
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
