@@ -3,6 +3,10 @@ set -oue pipefail
 
 source "/ctx/files/scripts/lib.sh"
 
+log_init
+
+start_phase "Package Installation"
+
 section "STAGE 3: Core Desktop + Filesystems + Networking"
 
 # Note: RPM Fusion already enabled in akmods stage for NVIDIA support
@@ -64,3 +68,5 @@ PKGS=(
 dnf_install_quiet "${PKGS[@]}"
 
 log "INFO" "Core Desktop: Complete"
+
+end_phase

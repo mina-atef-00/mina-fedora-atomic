@@ -3,6 +3,10 @@ set -oue pipefail
 
 source "/ctx/files/scripts/lib.sh"
 
+log_init
+
+start_phase "Cleanup"
+
 log "INFO" "Theming & Fonts..."
 
 # Install RPM font packages
@@ -212,3 +216,5 @@ log "INFO" "Cleaning up DNF cache..."
 dnf5 clean all
 
 log "INFO" "Theming: Complete"
+
+end_phase

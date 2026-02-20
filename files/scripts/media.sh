@@ -3,6 +3,10 @@ set -oue pipefail
 
 source "/ctx/files/scripts/lib.sh"
 
+log_init
+
+start_phase "COPR Repositories"
+
 log "INFO" "Multimedia, Codecs, Editors, and Git..."
 
 PKGS=(
@@ -26,3 +30,5 @@ PKGS=(
 dnf_install_quiet "${PKGS[@]}"
 
 log "INFO" "Multimedia & Editors: Complete"
+
+end_phase

@@ -3,6 +3,10 @@ set -oue pipefail
 
 source "/ctx/files/scripts/lib.sh"
 
+log_init
+
+start_phase "Theming & Fonts"
+
 section "STAGE 5: CLI Tools + GUI Utilities"
 
 # Enable COPR repositories needed for this layer
@@ -77,3 +81,5 @@ COPR_LIST=(
 printf '%s\n' "${COPR_LIST[@]}" > /tmp/copr-list.txt
 
 log "INFO" "CLI Tools & GUI Utilities: Complete"
+
+end_phase

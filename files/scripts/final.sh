@@ -3,6 +3,33 @@ set -oue pipefail
 
 source "/ctx/files/scripts/lib.sh"
 
+log_init
+
+start_phase "Finalization"
+
+collect_build_metrics() {
+    local duration
+    duration=$(get_build_duration)
+    
+    local layers=8
+    local packages_installed
+    local packages_removed
+    
+    packages_installed=$(rpm -qa | wc -l)
+    
+    local image_size
+    image_size=$(du -sh /usr 2>/dev/null | cut -f1 || echo "unknown")
+    
+    local date_str
+    date_str=$(date +%Y%m%d)
+    
+    local tags="latest
+latest.${date_str}
+${date_str}"
+    
+    echo "$duration|$image_size|$packages_installed|0|$tags"
+}
+
 log "INFO" "Finalization..."
 
 # Remove unwanted packages
@@ -116,3 +143,16 @@ fi
 log "INFO" "Finalization: Complete"
 log "INFO" "Build finished successfully for image: ${IMAGE_NAME}"
 log "INFO" "Profile: ${HOST_PROFILE}"
+
+end_phase
+
+IFS='|' read -r duration image_size packages_installed packages_removed tags <<< "$(collect_build_metrics)"
+
+print_footer \
+    "success" \
+    "${duration}" \
+    "${image_size}" \
+    "8" \
+    "${packages_installed}" \
+    "0" \
+    "${tags}"

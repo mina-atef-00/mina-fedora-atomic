@@ -3,6 +3,10 @@ set -oue pipefail
 
 source "/ctx/files/scripts/lib.sh"
 
+log_init
+
+start_phase "System Overlay"
+
 log "INFO" "Kernel Modules (Akmods)..."
 
 # Enable RPM Fusion (required for akmods and multimedia packages on all hosts)
@@ -105,3 +109,5 @@ else
 fi
 
 log "INFO" "Kernel Modules: Complete"
+
+end_phase

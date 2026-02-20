@@ -3,6 +3,10 @@ set -oue pipefail
 
 source "/ctx/files/scripts/lib.sh"
 
+log_init
+
+start_phase "Service Configuration"
+
 log "INFO" "Hardware Profile - ${HOST_PROFILE}..."
 
 # Install profile-specific drivers and configurations
@@ -211,3 +215,5 @@ EOF
 fi
 
 log "INFO" "Hardware Profile: Complete"
+
+end_phase
