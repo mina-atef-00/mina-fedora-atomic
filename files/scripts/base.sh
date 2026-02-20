@@ -5,13 +5,17 @@ source "/ctx/files/scripts/lib.sh"
 
 log_init
 
+echo "=========================================="
+echo " MINA FEDORA ATOMIC BUILD"
+echo "=========================================="
+
 install_gum() {
-    log_info "Installing gum (enhanced CLI output)..."
-    if dnf5 install -y gum --quiet 2>&1 | grep -v "^$"; then
-        log_success "Gum installed successfully"
+    echo "Installing gum for enhanced logging..."
+    if dnf5 install -y gum 2>&1; then
+        echo "Gum installed successfully!"
         return 0
     else
-        log_warn "Gum installation failed, using fallback mode"
+        echo "Gum installation failed, using fallback mode"
         export GUM_NO_EMOJI=1
         return 1
     fi
@@ -21,6 +25,14 @@ if command -v gum &>/dev/null; then
     log_info "Gum already installed"
 else
     install_gum || true
+fi
+
+echo ""
+echo "Checking gum availability..."
+if command -v gum &>/dev/null; then
+    echo "Gum is available: $(gum --version)"
+else
+    echo "Gum NOT available, using echo fallback"
 fi
 
 print_header \
