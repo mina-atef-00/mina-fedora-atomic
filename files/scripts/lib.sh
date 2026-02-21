@@ -26,7 +26,7 @@ declare -g GUM_LOG_FORMAT=""
 declare -g GUM_NO_EMOJI="${GUM_NO_EMOJI:-}"
 declare -g _GUM_AVAILABLE=""
 declare -g _PHASE_COUNT=0
-declare -g _PHASE_TOTAL=8  # Default to 8 phases; use set_phase_total() to change
+declare -g _PHASE_TOTAL=""
 declare -g _BUILD_STATE_DIR="/var/lib/build-state"
 declare -g _PHASE_COUNT_FILE="${_BUILD_STATE_DIR}/phase-count"
 declare -g _PHASE_START_TIME=""
@@ -469,8 +469,14 @@ EOF
 }
 
 set_phase_total() {
-    local total="${1:-8}"
-    _PHASE_TOTAL="$total"
+    local total="${1:-}"
+    if [[ -n "$total" && "$total" =~ ^[0-9]+$ ]]; then
+        _PHASE_TOTAL="$total"
+    fi
+}
+
+get_phase_total() {
+    echo "${_PHASE_TOTAL:-}"
 }
 
 start_phase() {
@@ -479,6 +485,13 @@ start_phase() {
     _PHASE_START_TIME="$(date +%s)"
     _CURRENT_PHASE_NAME="$phase_name"
     
+    local phase_display
+    if [[ -n "$_PHASE_TOTAL" ]]; then
+        phase_display="▶️ Phase ${_PHASE_COUNT}/${_PHASE_TOTAL}: ${phase_name}"
+    else
+        phase_display="▶️ Phase ${_PHASE_COUNT}: ${phase_name}"
+    fi
+    
     if _is_json_mode; then
         _output_json_phase "$_PHASE_COUNT" "$phase_name"
         return
@@ -486,10 +499,9 @@ start_phase() {
     
     echo ""
     if gum_available; then
-        local phase_text="▶️ Phase ${_PHASE_COUNT}/${_PHASE_TOTAL}: ${phase_name}"
-        gum style --border rounded --border-foreground "$COLOR_INFO" --padding "0 1" "$phase_text"
+        gum style --border rounded --border-foreground "$COLOR_INFO" --padding "0 1" "$phase_display"
     else
-        echo "▶️ Phase ${_PHASE_COUNT}/${_PHASE_TOTAL}: ${phase_name}"
+        echo "$phase_display"
     fi
     echo ""
 }

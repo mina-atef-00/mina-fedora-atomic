@@ -24,13 +24,13 @@ if [ -d "/tmp/akmods-common" ]; then
   log "INFO" "Installing common akmods..."
   
   if [ -d "/tmp/akmods-common/ublue-os" ]; then
-    dnf5 install -y /tmp/akmods-common/ublue-os/ublue-os-akmods*.rpm || true
+    dnf5 install -y --quiet /tmp/akmods-common/ublue-os/ublue-os-akmods*.rpm 2>&1 | tail -3 || true
   fi
   
   if [ -d "/tmp/akmods-common/kmods" ]; then
     # Install v4l2loopback userspace package first (required dependency)
-    dnf5 install -y v4l2loopback || true
-    dnf5 install -y /tmp/akmods-common/kmods/kmod-v4l2loopback*.rpm || true
+    dnf5 install -y --quiet v4l2loopback 2>&1 | tail -3 || true
+    dnf5 install -y --quiet /tmp/akmods-common/kmods/kmod-v4l2loopback*.rpm 2>&1 | tail -3 || true
   fi
 else
   log "WARN" "Common akmods directory not found at /tmp/akmods-common"
@@ -46,13 +46,13 @@ if [[ "$HOST_PROFILE" == "asus" ]]; then
     if [ -d "/tmp/akmods-nvidia/ublue-os" ]; then
       log "INFO" "Installing ublue-os-nvidia-addons..."
       ls -la /tmp/akmods-nvidia/ublue-os/
-      dnf5 install -y /tmp/akmods-nvidia/ublue-os/ublue-os-nvidia*.rpm
+      dnf5 install -y --quiet /tmp/akmods-nvidia/ublue-os/ublue-os-nvidia*.rpm 2>&1 | tail -3
     fi
     
     if [ -d "/tmp/akmods-nvidia/kmods" ]; then
       log "INFO" "Installing kmod-nvidia packages..."
       ls -la /tmp/akmods-nvidia/kmods/
-      dnf5 install -y /tmp/akmods-nvidia/kmods/kmod-nvidia*.rpm
+      dnf5 install -y --quiet /tmp/akmods-nvidia/kmods/kmod-nvidia*.rpm 2>&1 | tail -3
     fi
     
     # Debug: Check what's in the modules directory after installation
