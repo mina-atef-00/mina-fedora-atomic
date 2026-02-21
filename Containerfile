@@ -14,6 +14,10 @@ COPY files /files
 FROM ghcr.io/ublue-os/base-main:43 AS base
 
 FROM base AS setup
+ARG HOST_PROFILE
+ARG IMAGE_NAME
+ENV HOST_PROFILE="${HOST_PROFILE}" \
+    IMAGE_NAME="${IMAGE_NAME}"
 COPY --from=ctx /files/scripts/lib.sh /ctx/files/scripts/lib.sh
 COPY --from=ctx /files/scripts/base.sh /ctx/files/scripts/base.sh
 RUN --mount=type=cache,dst=/var/cache \
