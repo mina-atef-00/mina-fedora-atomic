@@ -20,6 +20,7 @@ env:
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
   DEFAULT_TAG: "latest"
   BUILDAH_LOG_LEVEL: "error"
+  BUILDAH_PROGRESS: "plain"
   CONTAINERS_LOG_LEVEL: "error"
   TZ: "UTC"
 
