@@ -17,9 +17,6 @@ copr_enable_quiet avengemedia/dms
 copr_enable_quiet dejan/rpms
 
 PKGS=(
-  # X11 utilities needed by font installers
-  "xset"
-
   # Core Desktop (includes dms, dms-greeter from COPR)
   "niri"
   "dms"
@@ -33,6 +30,7 @@ PKGS=(
   "papirus-icon-theme"
   "breeze-cursor-theme"
   "xwayland-satellite"
+  "podman-compose"
   "xdg-desktop-portal-gnome"
   "xdg-terminal-exec"
   "xdg-user-dirs"

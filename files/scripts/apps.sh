@@ -41,6 +41,7 @@ PKGS=(
   "age"
   "wlr-randr"
   "ShellCheck"
+  "xset"
 
   # GUI Utilities
   "kitty"
