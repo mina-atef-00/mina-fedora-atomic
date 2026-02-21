@@ -26,7 +26,9 @@ declare -g GUM_LOG_FORMAT=""
 declare -g GUM_NO_EMOJI="${GUM_NO_EMOJI:-}"
 declare -g _GUM_AVAILABLE=""
 declare -g _PHASE_COUNT=0
-declare -g _PHASE_TOTAL=8  # Default to 8 phases per PRD; use set_phase_total() to change
+declare -g _PHASE_TOTAL=8  # Default to 8 phases; use set_phase_total() to change
+declare -g _BUILD_STATE_DIR="/var/lib/build-state"
+declare -g _PHASE_COUNT_FILE="${_BUILD_STATE_DIR}/phase-count"
 declare -g _PHASE_START_TIME=""
 declare -g _BUILD_START_TIME=""
 declare -g _CURRENT_PHASE="${_CURRENT_PHASE:-unknown}"
@@ -166,6 +168,13 @@ log_init() {
     esac
     if [[ "$GUM_LOG_LEVEL" == "debug" ]]; then
         _VERBOSE_MODE="true"
+    fi
+    if [[ -f "$_PHASE_COUNT_FILE" ]]; then
+        local saved_count
+        saved_count=$(cat "$_PHASE_COUNT_FILE" 2>/dev/null || echo "0")
+        if [[ "$saved_count" =~ ^[0-9]+$ ]]; then
+            _PHASE_COUNT="$saved_count"
+        fi
     fi
 }
 
@@ -490,6 +499,9 @@ end_phase() {
     
     end_time="$(date +%s)"
     duration=$((end_time - _PHASE_START_TIME))
+    
+    mkdir -vp "$_BUILD_STATE_DIR"
+    echo "$_PHASE_COUNT" > "$_PHASE_COUNT_FILE"
     
     if _is_json_mode; then
         local phase_name

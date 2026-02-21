@@ -77,6 +77,7 @@ mkdir -vp /var/roothome
 chmod 700 /var/roothome
 mkdir -vp /var/lib/alternatives
 mkdir -vp /etc/environment.d
+mkdir -vp /var/lib/build-state
 
 # Make /opt immutable
 if [ -d /opt ]; then
