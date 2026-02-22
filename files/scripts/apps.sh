@@ -42,6 +42,7 @@ PKGS=(
   "wlr-randr"
   "ShellCheck"
   "xset"
+  "podman-compose"
 
   # GUI Utilities
   "kitty"
