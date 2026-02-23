@@ -30,7 +30,6 @@ PKGS=(
   "papirus-icon-theme"
   "breeze-cursor-theme"
   "xwayland-satellite"
-  "podman-compose"
   "xdg-desktop-portal-gnome"
   "xdg-terminal-exec"
   "xdg-user-dirs"
