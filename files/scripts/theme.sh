@@ -24,7 +24,7 @@ FONT_PKGS=(
   "google-roboto-slab-fonts"
   "terminus-fonts"
   "adobe-source-code-pro-fonts"
-  
+
   # CJK support
   "google-noto-cjk-fonts"
   "google-noto-sans-cjk-vf-fonts"
@@ -36,65 +36,66 @@ dnf_install_quiet "${FONT_PKGS[@]}"
 log "INFO" "Installing external fonts..."
 
 install_external_fonts() {
+  local FONTS_DIR="/usr/share/fonts"
+  local TMP_DIR="/tmp/extra_fonts"
+  local NERD_FONTS_REPO="https://github.com/ryanoasis/nerd-fonts/releases/latest/download"
   local -A EXTRA_FONTS=(
-    # Nerd Fonts - When name is correct, URL is not needed
     ['JetBrainsMono']=""
     ['FiraCode']=""
     ['NerdFontsSymbolsOnly']=""
-
-    # From URL
     ['Fira-Sans']="https://raw.githubusercontent.com/mozilla/Fira/refs/heads/master/ttf/FiraSans-Regular.ttf"
   )
 
-  if [[ ${#EXTRA_FONTS[@]} -gt 0 ]]; then
-    local FONTS_DIR="/usr/share/fonts"
-    local TMP_DIR="/tmp/extra_fonts"
-    local nf_repo="https://github.com/ryanoasis/nerd-fonts/releases/latest/download"
-    local font_name font_url url_file font_file font_dest font_tmpd
-    
-    for font_name in "${!EXTRA_FONTS[@]}"; do
-      font_url="${EXTRA_FONTS[$font_name]}"
-      font_name=${font_name// /} # remove spaces
-      font_dest="${FONTS_DIR}/${font_name}"
-      font_tmpd="${TMP_DIR}/${font_name}"
-      [[ -z "$font_url" ]] && {
-        font_url="${nf_repo}/${font_name}.tar.xz"
-        font_dest="${FONTS_DIR}/nerd-fonts/${font_name}"
-      }
-      url_file="$(basename "$font_url")"
+  [[ ${#EXTRA_FONTS[@]} -eq 0 ]] && return 0
 
-      log "INFO" "Adding font(s): ${font_name}"
-      log "INFO" "From URL: ${font_url}"
+  for font_name in "${!EXTRA_FONTS[@]}"; do
+    local font_url="${EXTRA_FONTS[$font_name]}"
+    font_name="${font_name// /}"
 
-      mkdir -vp "$font_tmpd" "$font_dest"
-      case "$font_url" in
-      *.zip | *.7z | *.rar | *.tar.* | *.tar | *.tbz | *.tbz2 | *.tgz | *.tlz | *.txz | *.tzst)
-        curl_get "${TMP_DIR}/${url_file}" "$font_url"
-        unarchive "${TMP_DIR}/${url_file}" "$font_tmpd"
+    local dest_dir temp_dir
+    if [[ -z "$font_url" ]]; then
+      font_url="${NERD_FONTS_REPO}/${font_name}.tar.xz"
+      dest_dir="${FONTS_DIR}/nerd-fonts/${font_name}"
+    else
+      dest_dir="${FONTS_DIR}/${font_name}"
+    fi
+    temp_dir="${TMP_DIR}/${font_name}"
+
+    log "INFO" "Installing font: ${font_name}"
+
+    mkdir -p "$temp_dir" "$dest_dir"
+
+    local archive
+    archive="$(basename "$font_url")"
+
+    case "$font_url" in
+      *.tar.* | *.zip | *.7z)
+        curl_get "${TMP_DIR}/${archive}" "$font_url"
+        unarchive "${TMP_DIR}/${archive}" "$temp_dir"
         ;;
       *.otf | *.ttf)
-        curl_get "${font_tmpd}/${url_file}" "$font_url"
+        curl_get "${temp_dir}/${archive}" "$font_url"
         ;;
       *.git)
-        git clone --depth 1 "$font_url" "$font_tmpd"
+        git clone --depth 1 "$font_url" "$temp_dir"
         ;;
       *)
         err "Unsupported URL: ${font_url}" && continue
         ;;
-      esac
-      find "$font_tmpd" -type f \( -name "*.otf" -o -name "*.ttf" \) \
-        -exec cp -vf {} "$font_dest"/ \;
-    done
-    rm -rf "$TMP_DIR"
+    esac
 
-    log "INFO" "External fonts installed"
-  fi
+    find "$temp_dir" -type f \( -name "*.otf" -o -name "*.ttf" \) \
+      -exec cp -vf {} "$dest_dir"/ \;
+  done
 
-  # Set proper permissions
-  if [[ -d "$FONTS_DIR" ]]; then
-    find "$FONTS_DIR" -type d -exec chmod 755 {} + || true
-    find "$FONTS_DIR" -type f -exec chmod 644 {} + || true
-  fi
+  rm -rf "$TMP_DIR"
+
+  [[ -d "$FONTS_DIR" ]] && {
+    find "$FONTS_DIR" -type d -exec chmod 755 {} + 2>/dev/null || true
+    find "$FONTS_DIR" -type f -exec chmod 644 {} + 2>/dev/null || true
+  }
+
+  log "INFO" "External fonts installed"
 }
 
 # Install Microsoft fonts
@@ -150,7 +151,7 @@ cat > /etc/fonts/local.conf <<'EOF'
       <family>Noto Sans</family>
     </prefer>
   </alias>
-  
+
   <!-- Default serif font -->
   <alias>
     <family>serif</family>
@@ -158,7 +159,7 @@ cat > /etc/fonts/local.conf <<'EOF'
       <family>Noto Serif</family>
     </prefer>
   </alias>
-  
+
   <!-- Default monospace font -->
   <alias>
     <family>monospace</family>
