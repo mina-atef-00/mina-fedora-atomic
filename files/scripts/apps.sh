@@ -11,11 +11,17 @@ section "STAGE 5: CLI Tools + GUI Utilities"
 
 # Enable COPR repositories needed for this layer
 log "INFO" "Enabling COPR repositories..."
-copr_enable_quiet lihaohong/yazi
-copr_enable_quiet alternateved/eza
-copr_enable_quiet atim/starship
-copr_enable_quiet lilay/topgrade
-copr_enable_quiet atim/bottom
+COPRS=(
+  "lihaohong/yazi"
+  "alternateved/eza"
+  "atim/starship"
+  "lilay/topgrade"
+  "atim/bottom"
+)
+
+for repo in "${COPRS[@]}"; do
+  copr_enable_quiet "$repo"
+done
 
 PKGS=(
   # CLI Tools
@@ -71,16 +77,7 @@ if [ -f /etc/default/useradd ]; then
 fi
 
 # Store COPR list for later cleanup
-COPR_LIST=(
-  "avengemedia/dms"
-  "dejan/rpms"
-  "lihaohong/yazi"
-  "alternateved/eza"
-  "atim/starship"
-  "lilay/topgrade"
-  "atim/bottom"
-)
-printf '%s\n' "${COPR_LIST[@]}" > /tmp/copr-list.txt
+printf '%s\n' "${COPRS[@]}" > /tmp/copr-list.txt
 
 log "INFO" "CLI Tools & GUI Utilities: Complete"
 
