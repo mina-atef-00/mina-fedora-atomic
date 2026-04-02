@@ -63,6 +63,7 @@ PKGS=(
   "syncplay"
   "swappy"
   "gnome-disk-utility"
+  "baobab"
   "chromium"
   "seahorse"
   "loupe"
@@ -77,7 +78,7 @@ if [ -f /etc/default/useradd ]; then
 fi
 
 # Store COPR list for later cleanup
-printf '%s\n' "${COPRS[@]}" > /tmp/copr-list.txt
+printf '%s\n' "${COPRS[@]}" >/tmp/copr-list.txt
 
 log "INFO" "CLI Tools & GUI Utilities: Complete"
 

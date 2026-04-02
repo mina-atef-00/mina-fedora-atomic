@@ -8,7 +8,7 @@ source "/ctx/files/scripts/lib.sh"
 log_init
 
 log_to_file() {
-    echo "[$(date '+%H:%M:%S')] $*" >> "$BUILD_LOG"
+  echo "[$(date '+%H:%M:%S')] $*" >>"$BUILD_LOG"
 }
 
 log_to_file "=========================================="
@@ -26,25 +26,25 @@ echo "=========================================="
 echo ""
 
 install_gum() {
-    log_to_file "Installing gum..."
-    echo ">>> Installing gum for enhanced logging..."
-    if dnf5 install -y gum; then
-        log_to_file "Gum installed successfully"
-        echo ">>> Gum installed successfully!"
-        return 0
-    else
-        log_to_file "Gum installation FAILED, using fallback"
-        echo ">>> Gum installation failed, using fallback mode"
-        export GUM_NO_EMOJI=1
-        return 1
-    fi
+  log_to_file "Installing gum..."
+  echo ">>> Installing gum for enhanced logging..."
+  if dnf5 install -y gum; then
+    log_to_file "Gum installed successfully"
+    echo ">>> Gum installed successfully!"
+    return 0
+  else
+    log_to_file "Gum installation FAILED, using fallback"
+    echo ">>> Gum installation failed, using fallback mode"
+    export GUM_NO_EMOJI=1
+    return 1
+  fi
 }
 
 if command -v gum &>/dev/null; then
-    log_to_file "Gum already installed"
-    echo ">>> Gum already installed"
+  log_to_file "Gum already installed"
+  echo ">>> Gum already installed"
 else
-    install_gum || true
+  install_gum || true
 fi
 
 gum_status="NOT AVAILABLE"
@@ -56,9 +56,9 @@ echo ""
 
 log_to_file "Printing header..."
 print_header \
-    "${IMAGE_NAME:-mina-fedora-atomic}" \
-    "${HOST_PROFILE:-default}" \
-    "ghcr.io/ublue-os/base-main:43"
+  "${IMAGE_NAME:-mina-fedora-atomic}" \
+  "${HOST_PROFILE:-default}" \
+  "ghcr.io/ublue-os/base-main:44"
 
 log_to_file "Starting Phase 1: Environment Preparation"
 start_phase "Environment Preparation"

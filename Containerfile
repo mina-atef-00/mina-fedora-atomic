@@ -11,7 +11,7 @@ COPY files /files
 # STAGE 1: BASE SETUP
 # Base OS + cleanup + environment prep
 # ============================================================================
-FROM ghcr.io/ublue-os/base-main:43 AS base
+FROM ghcr.io/ublue-os/base-main:44 AS base
 
 FROM base AS setup
 ARG HOST_PROFILE
@@ -31,8 +31,8 @@ RUN --mount=type=cache,dst=/var/cache \
 # NOTE: These tags must match the kernel version in base-main:43
 # Check https://github.com/ublue-os/akmods/pkgs/container/akmods for available tags
 # ============================================================================
-FROM ghcr.io/ublue-os/akmods:main-43 AS akmods-common
-FROM ghcr.io/ublue-os/akmods-nvidia-open:main-43 AS akmods-nvidia
+FROM ghcr.io/ublue-os/akmods:main-44 AS akmods-common
+FROM ghcr.io/ublue-os/akmods-nvidia-open:main-44 AS akmods-nvidia
 
 FROM setup AS akmods
 COPY --from=akmods-common /rpms /tmp/akmods-common

@@ -13,8 +13,8 @@ section "STAGE 3: Core Desktop + Filesystems + Networking"
 
 # Enable COPR repositories needed for this layer
 log "INFO" "Enabling COPR repositories..."
-copr_enable_quiet avengemedia/dms
 copr_enable_quiet dejan/rpms
+copr_enable_quiet avengemedia/dms
 
 PKGS=(
   # Core Desktop (includes dms, dms-greeter from COPR)
