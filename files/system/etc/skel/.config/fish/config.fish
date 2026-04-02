@@ -1,4 +1,5 @@
 set fish_greeting
+fish_config theme choose "Catppuccin Mocha"
 
 # Add local bin directories to PATH
 fish_add_path $HOME/.npm-global/bin
@@ -25,22 +26,40 @@ alias .4="cd ../../../.."
 alias .5="cd ../../../../.."
 
 # Docker/Podman
-alias d="docker"
+alias d="podman"
 alias p="podman"
 alias docker="podman"
 alias docker-compose="podman-compose"
-alias update="topgrade"
 
 # Common shortcuts
 alias e="exit"
 alias v="nvim"
 alias o="opencode"
+alias oweb="opencode web --port 4096 --mdns"
 alias y="yazi"
 alias free="free -h"
 alias df="df -h"
 alias lg="lazygit"
 alias zed="flatpak run dev.zed.Zed --wait"
+alias zd="flatpak run dev.zed.Zed --wait"
 alias zen="flatpak run app.zen_browser.zen"
+alias fp="flatpak"
+alias fpr="flatpak run"
+alias update="topgrade"
+alias cz="chezmoi"
+alias cza="chezmoi apply"
+alias czi="chezmoi init --apply https://github.com/mina-atef-00/dotfiles.git"
+alias vkstop="systemctl --user stop vibe-kanban.service"
+function vk
+    if systemctl --user is-active vibe-kanban.service >/dev/null 2>&1
+        echo "already running"
+        systemctl --user status vibe-kanban.service
+    else
+        systemctl --user start vibe-kanban.service
+    end
+end
 
 # sync from /etc/skel
 alias skel="rsync -av /etc/skel/.config $HOME/.config"
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv fish)"
