@@ -68,6 +68,7 @@ PKGS=(
   "seahorse"
   "loupe"
   "mpv"
+  "transmission"
 )
 
 dnf_install_quiet "${PKGS[@]}"
