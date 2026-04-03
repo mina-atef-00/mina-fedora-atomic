@@ -49,6 +49,7 @@ PKGS=(
   "ShellCheck"
   "xset"
   "podman-compose"
+  "yt-dlp"
 
   # GUI Utilities
   "kitty"
