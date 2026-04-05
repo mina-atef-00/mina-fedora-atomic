@@ -46,6 +46,7 @@ PKGS=(
   "wev"
   "age"
   "wlr-randr"
+  "wtype"
   "ShellCheck"
   "xset"
   "podman-compose"
