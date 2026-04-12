@@ -9,6 +9,8 @@ kargs = [
   "vt.default_blu=46,168,161,175,250,231,213,222,112,168,161,175,250,231,213,200",
   "rd.driver.blacklist=nouveau",
   "modprobe.blacklist=nouveau",
-  "nvidia-drm.modeset=1"
+  "nvidia-drm.modeset=1",
+  "intel_iommu=on",
+  "iommu=pt"
 ]
 match-architectures = ["x86_64"]

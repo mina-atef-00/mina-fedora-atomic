@@ -71,6 +71,7 @@ PKGS=(
   "loupe"
   "mpv"
   "transmission"
+  "@virtualization"
 )
 
 dnf_install_quiet "${PKGS[@]}"
