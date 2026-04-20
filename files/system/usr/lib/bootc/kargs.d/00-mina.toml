@@ -11,6 +11,8 @@ kargs = [
   "modprobe.blacklist=nouveau",
   "nvidia-drm.modeset=1",
   "intel_iommu=on",
-  "iommu=pt"
+  "iommu=pt",
+  "video=efifb:off",
+  "video=simplefb:off"
 ]
 match-architectures = ["x86_64"]
