@@ -4,3 +4,5 @@ output
 _build-*/**
 
 .vibe-kanban-workspaces/
+_bmad*/
+.opencode/
