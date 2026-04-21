@@ -71,7 +71,7 @@ PKGS=(
   "seahorse"
   "loupe"
   "mpv"
-  "transmission"
+  "qbittorrent"
   "@virtualization"
 )
 
