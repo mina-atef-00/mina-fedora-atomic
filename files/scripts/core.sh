@@ -15,9 +15,10 @@ section "STAGE 3: Core Desktop + Filesystems + Networking"
 log "INFO" "Enabling COPR repositories..."
 copr_enable_quiet dejan/rpms
 copr_enable_quiet avengemedia/dms
+copr_enable_quiet yalter/niri
 
 PKGS=(
-  # Core Desktop (includes dms, dms-greeter from COPR)
+  # Core Desktop
   "niri"
   "libdwarf"
   "dms"
