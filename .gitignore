@@ -6,3 +6,4 @@ _build-*/**
 .vibe-kanban-workspaces/
 _bmad*/
 .opencode/
+index.md
