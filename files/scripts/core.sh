@@ -19,6 +19,7 @@ copr_enable_quiet avengemedia/dms
 PKGS=(
   # Core Desktop (includes dms, dms-greeter from COPR)
   "niri"
+  "libdwarf"
   "dms"
   "greetd"
   "dms-greeter"
