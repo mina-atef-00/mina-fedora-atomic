@@ -17,7 +17,6 @@ COPRS=(
   "atim/starship"
   "lilay/topgrade"
   "atim/bottom"
-  "imput/helium"
 )
 
 for repo in "${COPRS[@]}"; do
@@ -67,7 +66,6 @@ PKGS=(
   "swappy"
   "gnome-disk-utility"
   "baobab"
-  "helium-bin"
   "seahorse"
   "loupe"
   "mpv"
