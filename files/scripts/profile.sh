@@ -13,8 +13,24 @@ log "INFO" "Hardware Profile - ${HOST_PROFILE}..."
 if [[ "$HOST_PROFILE" == "asus" ]]; then
   log "INFO" "Configuring ASUS Desktop Profile..."
 
-  # Blacklist nouveau
-  cat > /usr/lib/modprobe.d/00-nouveau-blacklist.conf <<EOF
+  # NVIDIA-specific kernel arguments
+
+  log "INFO" "Installing NVIDIA kernel arguments..."
+  cat >/usr/lib/bootc/kargs.d/10-nvidia.toml <<'KFARGS'
+kargs = [
+  "rd.driver.blacklist=nouveau",
+  "modprobe.blacklist=nouveau",
+  "nvidia-drm.modeset=1",
+  "intel_iommu=on",
+  "iommu=pt",
+  "video=efifb:off",
+  "video=simplefb:off"
+]
+match-architectures = ["x86_64"]
+KFARGS
+
+  # Blacklist nouveau (modprobe — prevents loading at runtime)
+  cat >/usr/lib/modprobe.d/00-nouveau-blacklist.conf <<EOF
 blacklist nouveau
 options nouveau modeset=0
 EOF
@@ -33,7 +49,7 @@ EOF
   dnf_install_quiet i2c-tools ddcutil
 
   # Create NVIDIA CDI service
-  cat > /usr/lib/systemd/system/nvctk-cdi.service <<'EOF'
+  cat >/usr/lib/systemd/system/nvctk-cdi.service <<'EOF'
 [Unit]
 Description=nvidia container toolkit CDI auto-generation
 ConditionFileIsExecutable=/usr/bin/nvidia-ctk
@@ -71,7 +87,7 @@ fi
 # Apply common system files (always run after profile-specific)
 if [ -d "/ctx/files/system" ]; then
   log "INFO" "Applying common system configuration..."
-  
+
   # Safety check: Prevent stateful directory pollution
   FORBIDDEN_PATHS=("var" "home" "root" "run")
   for path in "${FORBIDDEN_PATHS[@]}"; do
@@ -79,7 +95,7 @@ if [ -d "/ctx/files/system" ]; then
       die "CRITICAL ERROR: Overlay contains '/${path}'. In Bootc images, this directory is for runtime state only."
     fi
   done
-  
+
   cp -r /ctx/files/system/* / 2>/dev/null || true
 fi
 
@@ -202,7 +218,7 @@ fi
 if [[ "$HOST_PROFILE" == "lnvo" ]]; then
   log "INFO" "Configuring laptop power management..."
   mkdir -p /etc/systemd/logind.conf.d
-  cat > /etc/systemd/logind.conf.d/10-mina-power.conf <<EOF
+  cat >/etc/systemd/logind.conf.d/10-mina-power.conf <<EOF
 [Login]
 HandleLidSwitch=suspend
 HandleLidSwitchExternalPower=ignore
