@@ -63,17 +63,18 @@ window-rule {
 
 window-rule {
     match is-active=true
-    opacity 0.98
+    opacity 0.94
 }
 
 window-rule {
     match is-active=false
-    opacity 0.97
+    opacity 0.9
 }
 
 window-rule {
   match title="^(Picture-in-Picture|picture-in-Picture|Picture-in-picture|picture-in-picture)$"
   open-floating true
+  background-effect { blur false; }
   focus-ring { off; }
 }
 
@@ -108,6 +109,24 @@ window-rule {
     match app-id="org.gnome.Nautilus"
     match app-id="caja"
     default-column-width { proportion 0.61; }
+}
+
+// ---- Blur (niri 26.04) ----
+// DMS widgets - xray blur for windows, but not for dms widgets 
+//
+// layer-rule {
+//     match layer="top"
+//     match layer="overlay"
+//     background-effect { xray false; }
+// }
+
+window-rule {
+    background-effect { blur true; }
+}
+
+window-rule {
+    match app-id="mpv"
+    opacity 1.0
 }
 
 binds {
@@ -200,7 +219,7 @@ binds {
     Mod+Shift+E { spawn "nautilus"; }
     Mod+Shift+T { spawn "kitty" "-e" "btm"; }
     Mod+Shift+O { spawn "kitty" "-e" "opencode"; }
-    Mod+Shift+S { spawn "flatpak" "run" "com.heroicgameslauncher.hgl"; }
+    Mod+Shift+S { spawn "gamemoderun" "flatpak" "run" "com.heroicgameslauncher.hgl"; }
     Mod+Shift+D { spawn "flatpak" "run" "dev.vencord.Vesktop"; }
     Mod+Shift+N { spawn "flatpak" "run" "dev.zed.Zed"; }
 
@@ -213,6 +232,7 @@ binds {
     Mod+L { spawn "dms" "ipc" "call" "lock" "lock"; }
     Print { spawn "bash" "-c" "mkdir -p ~/Pictures/Screenshots && dms screenshot --stdout --no-file --no-clipboard | swappy -f - -o - | tee \"$HOME/Pictures/Screenshots/Screenshot_$(date +'%Y-%m-%d_%H-%M-%S.png')\" | dms cl copy -t image/png"; }
     Mod+Print { spawn "dms" "color" "pick" "-a"; }
+    Ctrl+Shift+Escape { spawn "dms" "ipc" "call" "processlist" "focusOrToggle"; } 
 
     // -- Media Keys --
     XF86AudioRaiseVolume { spawn "dms" "ipc" "call" "audio" "increment" "5"; }

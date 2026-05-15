@@ -1,2 +1,26 @@
+[init]
+    defaultBranch = main
+
 [commit]
-    gpgsign = false
+    gpgsign = true
+
+[pull]
+    rebase = true
+
+[core]
+    editor = nvim
+
+[push]
+    autoSetupRemote = true
+
+[merge]
+    conflictStyle = merge
+
+[diff]
+    color = auto
+
+[status]
+    color = auto
+
+[log]
+    decorate = auto

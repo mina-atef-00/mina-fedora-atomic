@@ -4,13 +4,15 @@ fish_config theme choose "Catppuccin Mocha"
 # Add local bin directories to PATH
 fish_add_path $HOME/.npm-global/bin
 fish_add_path $HOME/.local/bin
+fish_add_path $HOME/.local/sbin
 fish_add_path $HOME/.pub-cache/bin
+fish_add_path $HOME/.bun/bin
+fish_add_path /usr/sbin
 zoxide init fish | source
 fzf --fish | source
 starship init fish | source
 set -gx EDITOR nvim
-set -gx VISUAL "flatpak run dev.zed.Zed --wait"
-fish_add_path /usr/sbin
+set -gx VISUAL nvim
 
 # Basic navigation with eza
 alias ll="eza -l --icons --group-directories-first"
@@ -33,6 +35,7 @@ alias docker-compose="podman-compose"
 
 # Common shortcuts
 alias e="exit"
+alias h="hermes --tui"
 alias v="nvim"
 alias o="opencode"
 alias oweb="opencode web --port 4096 --mdns"
@@ -49,6 +52,7 @@ alias update="topgrade"
 alias cz="chezmoi"
 alias cza="chezmoi apply"
 alias czi="chezmoi init --apply https://github.com/mina-atef-00/dotfiles.git"
+alias bat="bat --theme 'Catppuccin Mocha'"
 alias vkstop="systemctl --user stop vibe-kanban.service"
 function vk
     if systemctl --user is-active vibe-kanban.service >/dev/null 2>&1

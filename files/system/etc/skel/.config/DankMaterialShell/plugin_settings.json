@@ -1,0 +1,16 @@
+{
+  "calculator": {
+    "enabled": true,
+    "trigger": "=",
+    "calcEngine": "qalc"
+  },
+  "emojiLauncher": {
+    "enabled": true,
+    "pasteOnSelect": true
+  },
+  "dockerManager": {
+    "enabled": false,
+    "terminalApp": "kitty --hold",
+    "dockerBinary": "podman"
+  }
+}
