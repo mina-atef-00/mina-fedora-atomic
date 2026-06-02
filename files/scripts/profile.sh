@@ -211,6 +211,7 @@ if [ -f "/etc/bluetooth/main.conf" ]; then
 
 [Policy]
 AutoEnable=true
+MultiProfile=single
 EOF
 fi
 
