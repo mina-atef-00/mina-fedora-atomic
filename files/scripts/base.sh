@@ -58,7 +58,7 @@ log_to_file "Printing header..."
 print_header \
   "${IMAGE_NAME:-mina-fedora-atomic}" \
   "${HOST_PROFILE:-default}" \
-  "ghcr.io/ublue-os/base-main:44"
+  "ghcr.io/ublue-os/base-main:43"
 
 log_to_file "Starting Phase 1: Environment Preparation"
 start_phase "Environment Preparation"
