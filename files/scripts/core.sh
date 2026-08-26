@@ -40,6 +40,8 @@ PKGS=(
   "gnome-keyring-pam"
   "gvfs"
   "gvfs-fuse"
+  "fuse-libs"
+  "fuse3-libs"
   "gvfs-gphoto2"
   "gvfs-goa"
   "gvfs-mtp"
